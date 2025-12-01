@@ -14,9 +14,9 @@ Features:
 - CLI-driven with configurable options
 
 Usage:
-    python es_to_mysql.py -H localhost -u root -p secret -d mydb -t temp_data
-    python es_to_mysql.py -H localhost -u root -p secret -d mydb -t es_export --skip event
-    python es_to_mysql.py -H localhost -u root -p secret -d mydb -t temp_data --discover-only
+    python flatten_es_data_to_mysql.py -H localhost -u root -p secret -d mydb -t temp_data
+    python flatten_es_data_to_mysql.py -H localhost -u root -p secret -d mydb -t es_export --skip event
+    python flatten_es_data_to_mysql.py -H localhost -u root -p secret -d mydb -t temp_data --discover-only
 """
 
 import mysql.connector
@@ -702,16 +702,16 @@ def parse_args():
         epilog="""
 Examples:
   # Basic usage
-  python es_to_mysql.py -H localhost -u root -p mypassword -d mydb -t temp_data
+  python flatten_es_data_to_mysql.py -H localhost -u root -p mypassword -d mydb -t temp_data
 
   # Specify temp table and skip paths
-  python es_to_mysql.py -H localhost -u root -p mypassword -d mydb -t es_export --skip event
+  python flatten_es_data_to_mysql.py -H localhost -u root -p mypassword -d mydb -t es_export --skip event
 
   # Just discover schema (no changes)
-  python es_to_mysql.py -H localhost -u root -p mypassword -d mydb -t temp_data --discover-only
+  python flatten_es_data_to_mysql.py -H localhost -u root -p mypassword -d mydb -t temp_data --discover-only
 
   # Create tables but don't load data
-  python es_to_mysql.py -H localhost -u root -p mypassword -d mydb -t temp_data --create-only
+  python flatten_es_data_to_mysql.py -H localhost -u root -p mypassword -d mydb -t temp_data --create-only
         """
     )
     

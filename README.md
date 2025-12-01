@@ -50,13 +50,13 @@ LINES TERMINATED BY '\n'
 ### 2. Discover Schema
 
 ```bash
-python es_to_mysql.py -H localhost -u root -p mypassword -d mydb --discover-only
+python flatten_es_data_to_mysql.py -H localhost -u root -p mypassword -d mydb -t temp_data --discover-only
 ```
 
 ### 3. Create Tables and Load Data
 
 ```bash
-python es_to_mysql.py -H localhost -u root -p mypassword -d mydb
+python flatten_es_data_to_mysql.py -H localhost -u root -p mypassword -d mydb -t temp_data
 ```
 
 ## Usage
@@ -64,7 +64,7 @@ python es_to_mysql.py -H localhost -u root -p mypassword -d mydb
 ### Basic Usage
 
 ```bash
-python es_to_mysql.py -H localhost -u root -p mypassword -d mydb
+python flatten_es_data_to_mysql.py -H localhost -u root -p mypassword -d mydb -t temp_data
 ```
 
 ### Command Line Options
@@ -76,7 +76,7 @@ python es_to_mysql.py -H localhost -u root -p mypassword -d mydb
 | `--user` | `-u` | MySQL user (required) | - |
 | `--password` | `-p` | MySQL password (required) | - |
 | `--database` | `-d` | MySQL database (required) | - |
-| `--temp-table` | `-t` | Source staging table name | `temp_data` |
+| `--temp-table` | `-t` | Source staging table name (required) | - |
 | `--sample` | - | Sample size for schema discovery | 100 |
 | `--batch` | - | Batch size for commits | 100 |
 | `--skip` | - | JSON paths to skip (space-separated) | - |
@@ -88,25 +88,25 @@ python es_to_mysql.py -H localhost -u root -p mypassword -d mydb
 
 ```bash
 # Discover schema only (no database changes)
-python es_to_mysql.py -H localhost -u root -p secret -d mydb --discover-only
+python flatten_es_data_to_mysql.py -H localhost -u root -p secret -d mydb -t temp_data --discover-only
 
 # Create tables but don't load data yet
-python es_to_mysql.py -H localhost -u root -p secret -d mydb --create-only
+python flatten_es_data_to_mysql.py -H localhost -u root -p secret -d mydb -t temp_data --create-only
 
 # Full run with custom staging table
-python es_to_mysql.py -H localhost -u root -p secret -d mydb -t es_export
+python flatten_es_data_to_mysql.py -H localhost -u root -p secret -d mydb -t es_export
 
 # Skip noisy paths and increase sample size
-python es_to_mysql.py -H localhost -u root -p secret -d mydb \
+python flatten_es_data_to_mysql.py -H localhost -u root -p secret -d mydb -t temp_data \
     --skip event.original metadata.debug \
     --sample 500
 
 # Keep complex nested data as JSON blob
-python es_to_mysql.py -H localhost -u root -p secret -d mydb \
+python flatten_es_data_to_mysql.py -H localhost -u root -p secret -d mydb -t temp_data \
     --keep-json eventData.rawPayload
 
 # Large batch processing
-python es_to_mysql.py -H localhost -u root -p secret -d mydb \
+python flatten_es_data_to_mysql.py -H localhost -u root -p secret -d mydb -t temp_data \
     --sample 500 \
     --batch 500
 ```

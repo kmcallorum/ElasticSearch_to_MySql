@@ -24,8 +24,8 @@ pip install mysql-connector-python
 ## Installation
 
 ```bash
-git clone https://github.com/yourusername/es-to-mysql.git
-cd es-to-mysql
+git clone https://github.com/optum-eeps/ElasticSearch_to_MySql.git
+cd ElasticSearch_to_MySql
 ```
 
 ## Quick Start
@@ -35,28 +35,30 @@ cd es-to-mysql
 First, load your Elasticsearch JSON export into a MySQL staging table:
 
 ```sql
-CREATE TABLE temp_data (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    json_data JSON
+CREATE TABLE your_staging_table (
+    id VARCHAR(255),
+    content JSON
 );
 
 -- Load your ES export (adjust path as needed)
+-- id is Elasticsearch's document ID (retained for reference/testing)
+-- content holds the JSON document data
 LOAD DATA LOCAL INFILE '/path/to/es_export.json'
-INTO TABLE temp_data
+INTO TABLE your_staging_table
 LINES TERMINATED BY '\n'
-(json_data);
+(content);
 ```
 
 ### 2. Discover Schema
 
 ```bash
-python flatten_es_data_to_mysql.py -H localhost -u root -p mypassword -d mydb -t temp_data --discover-only
+python flatten_es_data_to_mysql.py -H localhost -u root -p mypassword -d mydb -t your_staging_table --discover-only
 ```
 
 ### 3. Create Tables and Load Data
 
 ```bash
-python flatten_es_data_to_mysql.py -H localhost -u root -p mypassword -d mydb -t temp_data
+python flatten_es_data_to_mysql.py -H localhost -u root -p mypassword -d mydb -t your_staging_table
 ```
 
 ## Usage
@@ -64,7 +66,7 @@ python flatten_es_data_to_mysql.py -H localhost -u root -p mypassword -d mydb -t
 ### Basic Usage
 
 ```bash
-python flatten_es_data_to_mysql.py -H localhost -u root -p mypassword -d mydb -t temp_data
+python flatten_es_data_to_mysql.py -H localhost -u root -p mypassword -d mydb -t your_staging_table
 ```
 
 ### Command Line Options
@@ -77,6 +79,7 @@ python flatten_es_data_to_mysql.py -H localhost -u root -p mypassword -d mydb -t
 | `--password` | `-p` | MySQL password (required) | - |
 | `--database` | `-d` | MySQL database (required) | - |
 | `--temp-table` | `-t` | Source staging table name (required) | - |
+| `--json-column` | `-j` | Column name containing JSON data | `content` |
 | `--sample` | - | Sample size for schema discovery | 100 |
 | `--batch` | - | Batch size for commits | 100 |
 | `--skip` | - | JSON paths to skip (space-separated) | - |
@@ -88,25 +91,28 @@ python flatten_es_data_to_mysql.py -H localhost -u root -p mypassword -d mydb -t
 
 ```bash
 # Discover schema only (no database changes)
-python flatten_es_data_to_mysql.py -H localhost -u root -p secret -d mydb -t temp_data --discover-only
+python flatten_es_data_to_mysql.py -H localhost -u root -p secret -d mydb -t es_export --discover-only
 
 # Create tables but don't load data yet
-python flatten_es_data_to_mysql.py -H localhost -u root -p secret -d mydb -t temp_data --create-only
+python flatten_es_data_to_mysql.py -H localhost -u root -p secret -d mydb -t es_export --create-only
 
-# Full run with custom staging table
+# Full run
 python flatten_es_data_to_mysql.py -H localhost -u root -p secret -d mydb -t es_export
 
 # Skip noisy paths and increase sample size
-python flatten_es_data_to_mysql.py -H localhost -u root -p secret -d mydb -t temp_data \
+python flatten_es_data_to_mysql.py -H localhost -u root -p secret -d mydb \
+    -t es_export \
     --skip event.original metadata.debug \
     --sample 500
 
 # Keep complex nested data as JSON blob
-python flatten_es_data_to_mysql.py -H localhost -u root -p secret -d mydb -t temp_data \
+python flatten_es_data_to_mysql.py -H localhost -u root -p secret -d mydb \
+    -t es_export \
     --keep-json eventData.rawPayload
 
 # Large batch processing
-python flatten_es_data_to_mysql.py -H localhost -u root -p secret -d mydb -t temp_data \
+python flatten_es_data_to_mysql.py -H localhost -u root -p secret -d mydb \
+    -t es_export \
     --sample 500 \
     --batch 500
 ```
@@ -415,4 +421,4 @@ MIT
 
 ## Contributing
 
-Pull requests welcome. For major changes, please open an issue first to discuss.
+Kevin McAllorum, Principal Engineer, TLCP

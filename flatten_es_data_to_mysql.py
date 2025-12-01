@@ -14,9 +14,9 @@ Features:
 - CLI-driven with configurable options
 
 Usage:
-    python flatten_es_data_to_mysql.py -H localhost -u root -p secret -d mydb -t temp_data
+    python flatten_es_data_to_mysql.py -H localhost -u root -p secret -d mydb -t staging_table
     python flatten_es_data_to_mysql.py -H localhost -u root -p secret -d mydb -t es_export --skip event
-    python flatten_es_data_to_mysql.py -H localhost -u root -p secret -d mydb -t temp_data --discover-only
+    python flatten_es_data_to_mysql.py -H localhost -u root -p secret -d mydb -t es_export --discover-only
 """
 
 import mysql.connector
@@ -91,9 +91,10 @@ class ElasticsearchToMySQL:
     """
     
     def __init__(self, connection, temp_table: str = 'temp_data', 
-                 config: SchemaConfig = None):
+                 json_column: str = 'content', config: SchemaConfig = None):
         self.conn = connection
         self.temp_table = temp_table
+        self.json_column = json_column
         self.config = config or SchemaConfig()
         
         self.tables = {}           # table_name -> {columns: {name: type}, path: str, parent: str}
@@ -243,7 +244,7 @@ class ElasticsearchToMySQL:
         print("=" * 60)
         
         cursor = self.conn.cursor()
-        cursor.execute(f"SELECT json_data FROM {self.temp_table} LIMIT %s", (sample_size,))
+        cursor.execute(f"SELECT {self.json_column} FROM {self.temp_table} LIMIT %s", (sample_size,))
         
         # Initialize root table
         self.tables['document'] = {
@@ -668,7 +669,7 @@ class ElasticsearchToMySQL:
         
         print(f"\nLoading {total_count} documents...")
         
-        cursor.execute(f"SELECT json_data FROM {self.temp_table}")
+        cursor.execute(f"SELECT {self.json_column} FROM {self.temp_table}")
         
         processed = 0
         errors = 0
@@ -702,16 +703,16 @@ def parse_args():
         epilog="""
 Examples:
   # Basic usage
-  python flatten_es_data_to_mysql.py -H localhost -u root -p mypassword -d mydb -t temp_data
+  python flatten_es_data_to_mysql.py -H localhost -u root -p mypassword -d mydb -t staging_table
 
   # Specify temp table and skip paths
   python flatten_es_data_to_mysql.py -H localhost -u root -p mypassword -d mydb -t es_export --skip event
 
   # Just discover schema (no changes)
-  python flatten_es_data_to_mysql.py -H localhost -u root -p mypassword -d mydb -t temp_data --discover-only
+  python flatten_es_data_to_mysql.py -H localhost -u root -p mypassword -d mydb -t es_export --discover-only
 
   # Create tables but don't load data
-  python flatten_es_data_to_mysql.py -H localhost -u root -p mypassword -d mydb -t temp_data --create-only
+  python flatten_es_data_to_mysql.py -H localhost -u root -p mypassword -d mydb -t es_export --create-only
         """
     )
     
@@ -724,7 +725,9 @@ Examples:
     
     # Table args
     parser.add_argument('-t', '--temp-table', required=True,
-                        help='Source temp table name')
+                        help='Source staging table name containing JSON data (required)')
+    parser.add_argument('-j', '--json-column', default='content',
+                        help='Column name containing JSON data (default: content)')
     
     # Processing args
     parser.add_argument('--sample', type=int, default=100,
@@ -770,7 +773,8 @@ def main():
     # Initialize loader
     loader = ElasticsearchToMySQL(
         conn, 
-        temp_table=args.temp_table, 
+        temp_table=args.temp_table,
+        json_column=args.json_column,
         config=config
     )
     

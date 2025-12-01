@@ -14,9 +14,9 @@ Features:
 - CLI-driven with configurable options
 
 Usage:
-    python es_to_mysql.py -H localhost -u root -p secret -d mydb
+    python es_to_mysql.py -H localhost -u root -p secret -d mydb -t temp_data
     python es_to_mysql.py -H localhost -u root -p secret -d mydb -t es_export --skip event
-    python es_to_mysql.py -H localhost -u root -p secret -d mydb --discover-only
+    python es_to_mysql.py -H localhost -u root -p secret -d mydb -t temp_data --discover-only
 """
 
 import mysql.connector
@@ -702,16 +702,16 @@ def parse_args():
         epilog="""
 Examples:
   # Basic usage
-  python es_to_mysql.py -H localhost -u root -p mypassword -d mydb
+  python es_to_mysql.py -H localhost -u root -p mypassword -d mydb -t temp_data
 
   # Specify temp table and skip paths
   python es_to_mysql.py -H localhost -u root -p mypassword -d mydb -t es_export --skip event
 
   # Just discover schema (no changes)
-  python es_to_mysql.py -H localhost -u root -p mypassword -d mydb --discover-only
+  python es_to_mysql.py -H localhost -u root -p mypassword -d mydb -t temp_data --discover-only
 
   # Create tables but don't load data
-  python es_to_mysql.py -H localhost -u root -p mypassword -d mydb --create-only
+  python es_to_mysql.py -H localhost -u root -p mypassword -d mydb -t temp_data --create-only
         """
     )
     
@@ -723,8 +723,8 @@ Examples:
     parser.add_argument('-d', '--database', required=True, help='MySQL database')
     
     # Table args
-    parser.add_argument('-t', '--temp-table', default='temp_data', 
-                        help='Source temp table name (default: temp_data)')
+    parser.add_argument('-t', '--temp-table', required=True,
+                        help='Source temp table name')
     
     # Processing args
     parser.add_argument('--sample', type=int, default=100,

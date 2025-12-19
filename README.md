@@ -2,6 +2,7 @@
 
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Tests](https://github.com/kmcallorum/ElasticSearch_to_MySql/actions/workflows/tests.yml/badge.svg)](https://github.com/kmcallorum/ElasticSearch_to_MySql/actions/workflows/tests.yml)
 [![Tests](https://img.shields.io/badge/tests-pytest-green.svg)](https://docs.pytest.org/)
 
 A production-ready, testable data migration tool for moving data between Elasticsearch, MySQL, CSV files, and other sources/sinks. Built with dependency injection for maximum flexibility and testability.
@@ -56,8 +57,7 @@ The codebase uses **dependency injection** to separate concerns and enable testi
 │ - cleanup()     │
 └─────────────────┘
 ```
-## Migration Flow
-   ![Migration Flow](migration_flow.png)
+
 ## File Structure
 
 - **`data_interfaces.py`** - Abstract base classes (DataSource, DataSink)
@@ -272,11 +272,11 @@ A: Check logs for errors, verify CSV file exists and has headers.
 
 MIT License - See [LICENSE](LICENSE) file for details.
 
-Copyright (c) 2024 Kevin McAllorum
+Copyright (c) 2024 Mac McAllorum
 
 ## 👤 Author
 
-**Kevin McAllorum**
+**Mac McAllorum**
 - Email: kevin_mcallorum@linux.com
 - GitHub: [@kmcallorum](https://github.com/kmcallorum)
 - Experience: 43 years in enterprise software engineering

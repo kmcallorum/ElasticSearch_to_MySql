@@ -56,7 +56,8 @@ The codebase uses **dependency injection** to separate concerns and enable testi
 │ - cleanup()     │
 └─────────────────┘
 ```
-
+## Migration Flow
+   ![Migration Flow](migration_flow.png)
 ## File Structure
 
 - **`data_interfaces.py`** - Abstract base classes (DataSource, DataSink)

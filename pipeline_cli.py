@@ -1,0 +1,158 @@
+"""
+CLI entry point with dependency injection support
+
+Author: Kevin McAllorum (kevin_mcallorum@linux.com)
+GitHub: github.com/kmcallorum
+License: MIT
+"""
+import argparse
+import logging
+import sys
+from pipeline import DataPipeline
+from production_impl import ElasticsearchSource, MySQLSink
+from test_impl import CSVSource, FileSink, JSONLSink
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    handlers=[
+        logging.FileHandler("pipeline.log"),
+        logging.StreamHandler(sys.stdout)
+    ]
+)
+logger = logging.getLogger(__name__)
+
+
+def create_source(args):
+    """Factory function to create appropriate data source"""
+    if args.source_type == "elasticsearch":
+        return ElasticsearchSource(
+            es_url=args.es_url,
+            batch_size=args.batch_size,
+            es_user=args.es_user,
+            es_pass=args.es_pass,
+            api_key=args.api_key
+        )
+    elif args.source_type == "csv":
+        return CSVSource(
+            filepath=args.csv_file,
+            id_column=args.csv_id_column,
+            content_column=args.csv_content_column
+        )
+    else:
+        raise ValueError(f"Unknown source type: {args.source_type}")
+
+
+def create_sink(args):
+    """Factory function to create appropriate data sink"""
+    if args.sink_type == "mysql":
+        return MySQLSink(
+            host=args.db_host,
+            user=args.db_user,
+            password=args.db_pass,
+            database=args.db_name,
+            table=args.db_table
+        )
+    elif args.sink_type == "file":
+        return FileSink(filepath=args.output_file)
+    elif args.sink_type == "jsonl":
+        return JSONLSink(filepath=args.output_file)
+    else:
+        raise ValueError(f"Unknown sink type: {args.sink_type}")
+
+
+def build_query_params(args):
+    """Build query parameters from CLI args"""
+    params = {}
+    
+    if hasattr(args, 'match_all') and args.match_all:
+        params["match_all"] = True
+    elif hasattr(args, 'gte') and hasattr(args, 'lte'):
+        if args.gte and args.lte:
+            params["gte"] = args.gte
+            params["lte"] = args.lte
+    
+    if hasattr(args, 'limit') and args.limit:
+        params["limit"] = args.limit
+    
+    return params if params else None
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        description="Data pipeline with pluggable source and sink implementations"
+    )
+    
+    # Source/Sink selection
+    parser.add_argument("--source_type", required=True, 
+                       choices=["elasticsearch", "csv"],
+                       help="Type of data source")
+    parser.add_argument("--sink_type", required=True,
+                       choices=["mysql", "file", "jsonl"],
+                       help="Type of data sink")
+    
+    # Elasticsearch source args
+    parser.add_argument("--es_url", help="Elasticsearch URL")
+    parser.add_argument("--es_user", help="Elasticsearch username")
+    parser.add_argument("--es_pass", help="Elasticsearch password")
+    parser.add_argument("--api_key", help="Elasticsearch API Key")
+    parser.add_argument("--batch_size", type=int, default=1000)
+    
+    # CSV source args
+    parser.add_argument("--csv_file", help="Path to CSV file")
+    parser.add_argument("--csv_id_column", default="id", help="CSV column name for record ID")
+    parser.add_argument("--csv_content_column", default="content", help="CSV column name for content")
+    
+    # MySQL sink args
+    parser.add_argument("--db_host", help="MySQL host")
+    parser.add_argument("--db_user", help="MySQL user")
+    parser.add_argument("--db_pass", help="MySQL password")
+    parser.add_argument("--db_name", help="MySQL database")
+    parser.add_argument("--db_table", help="MySQL table")
+    
+    # File sink args
+    parser.add_argument("--output_file", help="Output file path for file/jsonl sink")
+    
+    # Query options
+    parser.add_argument("--gte", help="Start date for ES query")
+    parser.add_argument("--lte", help="End date for ES query")
+    parser.add_argument("--match_all", action="store_true", help="Use match_all query for ES")
+    parser.add_argument("--limit", type=int, help="Limit number of records (for testing)")
+    
+    # Pipeline options
+    parser.add_argument("--threads", type=int, default=1, 
+                       help="Number of threads (use 1 for file sinks, 5+ for MySQL)")
+    
+    args = parser.parse_args()
+    
+    try:
+        # Create source and sink via dependency injection
+        source = create_source(args)
+        sink = create_sink(args)
+        
+        # Create and run pipeline
+        pipeline = DataPipeline(source, sink, num_threads=args.threads)
+        query_params = build_query_params(args)
+        
+        stats = pipeline.run(query_params)
+        
+        # Cleanup
+        pipeline.cleanup()
+        
+        logger.info("=" * 60)
+        logger.info("PIPELINE SUMMARY")
+        logger.info(f"Source: {args.source_type}")
+        logger.info(f"Sink: {args.sink_type}")
+        logger.info(f"Records inserted: {stats['inserted']}")
+        logger.info(f"Records skipped: {stats['skipped']}")
+        logger.info(f"Errors: {stats['errors']}")
+        logger.info("=" * 60)
+        
+    except Exception as e:
+        logger.error(f"Pipeline failed: {e}", exc_info=True)
+        sys.exit(1)
+
+
+if __name__ == "__main__":
+    main()

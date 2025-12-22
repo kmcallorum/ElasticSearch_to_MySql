@@ -125,6 +125,7 @@ pytest -v
 # Run specific test file
 pytest test_pipeline.py -v
 pytest test_production_impl.py -v
+pytest test_pipeline_multithreaded.py -v
 pytest test_error_analyzer.py -v
 
 # Run specific test class
@@ -135,10 +136,13 @@ pytest --cov=. --cov-report=html --cov-report=term-missing
 ```
 
 **Test Files:**
-- `test_pipeline.py` - Core pipeline logic tests
-- `test_production_impl.py` - Production implementations (mocked ES/MySQL)
-- `test_error_analyzer.py` - Error analyzer tests
+- `test_pipeline.py` - Core pipeline logic tests (9 tests)
+- `test_production_impl.py` - Production implementations with mocks (14 tests)
+- `test_pipeline_multithreaded.py` - Multi-threaded execution tests (13 tests)
+- `test_error_analyzer.py` - Error analyzer tests (12 tests)
 - `custom_tests_example.py` - Domain-specific test examples
+
+**Total: 48+ test cases covering 70%+ of the codebase**
 
 ## 🤖 AI-Powered Error Analysis (NEW!)
 

@@ -1,7 +1,7 @@
 """
 CLI entry point with dependency injection support
 
-Author: Kevin McAllorum (kevin_mcallorum@linux.com)
+Author: Mac McAllorum (kevin_mcallorum@linux.com)
 GitHub: github.com/kmcallorum
 License: MIT
 """
@@ -11,6 +11,7 @@ import sys
 from pipeline import DataPipeline
 from production_impl import ElasticsearchSource, MySQLSink
 from test_impl import CSVSource, FileSink, JSONLSink
+from error_analyzer import ClaudeErrorAnalyzer, SimpleErrorAnalyzer, NoOpErrorAnalyzer
 
 # Configure logging
 logging.basicConfig(
@@ -60,6 +61,18 @@ def create_sink(args):
         return JSONLSink(filepath=args.output_file)
     else:
         raise ValueError(f"Unknown sink type: {args.sink_type}")
+
+
+def create_error_analyzer(args):
+    """Factory function to create appropriate error analyzer"""
+    if args.ai_errors:
+        logger.info("🤖 AI-powered error analysis enabled (using Claude API)")
+        return ClaudeErrorAnalyzer()
+    elif args.simple_errors:
+        logger.info("💡 Simple error analysis enabled (rule-based, no API required)")
+        return SimpleErrorAnalyzer()
+    else:
+        return NoOpErrorAnalyzer()
 
 
 def build_query_params(args):
@@ -124,15 +137,24 @@ def main():
     parser.add_argument("--threads", type=int, default=1, 
                        help="Number of threads (use 1 for file sinks, 5+ for MySQL)")
     
+    # Error analysis options
+    parser.add_argument("--ai-errors", action="store_true",
+                       help="Enable AI-powered error analysis (requires ANTHROPIC_API_KEY env var)")
+    parser.add_argument("--simple-errors", action="store_true",
+                       help="Enable simple rule-based error suggestions (no API required)")
+    
     args = parser.parse_args()
     
     try:
         # Create source and sink via dependency injection
         source = create_source(args)
         sink = create_sink(args)
+        error_analyzer = create_error_analyzer(args)
         
         # Create and run pipeline
-        pipeline = DataPipeline(source, sink, num_threads=args.threads)
+        pipeline = DataPipeline(source, sink, 
+                              num_threads=args.threads,
+                              error_analyzer=error_analyzer)
         query_params = build_query_params(args)
         
         stats = pipeline.run(query_params)

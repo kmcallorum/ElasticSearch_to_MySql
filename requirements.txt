@@ -2,3 +2,4 @@ requests>=2.31.0
 mysql-connector-python>=8.2.0
 pytest>=7.4.0
 pytest-cov>=4.1.0
+anthropic>=0.39.0  # Optional: for AI-powered error analysis

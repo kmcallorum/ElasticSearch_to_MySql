@@ -130,6 +130,90 @@ pip install pytest-cov
 pytest test_pipeline.py --cov=. --cov-report=html
 ```
 
+## 🤖 AI-Powered Error Analysis (NEW!)
+
+Get intelligent troubleshooting suggestions when errors occur!
+
+### Features
+
+- **AI-Powered**: Uses Claude API to analyze errors and provide context-aware suggestions
+- **Rule-Based Fallback**: Simple error analysis without requiring API keys
+- **Non-Intrusive**: Completely optional, doesn't affect pipeline operation
+
+### Usage
+
+**Option 1: AI-Powered Analysis** (requires API key)
+```bash
+# Set your Anthropic API key
+export ANTHROPIC_API_KEY="your-key-here"
+
+# Run with AI error analysis
+python pipeline_cli.py \
+  --source_type csv \
+  --sink_type file \
+  --csv_file data.csv \
+  --output_file output.jsonl \
+  --threads 1 \
+  --ai-errors
+```
+
+**Option 2: Simple Rule-Based Analysis** (no API key required)
+```bash
+python pipeline_cli.py \
+  --source_type csv \
+  --sink_type file \
+  --csv_file data.csv \
+  --output_file output.jsonl \
+  --threads 1 \
+  --simple-errors
+```
+
+**Option 3: No Error Analysis** (default)
+```bash
+python pipeline_cli.py \
+  --source_type csv \
+  --sink_type file \
+  --csv_file data.csv \
+  --output_file output.jsonl \
+  --threads 1
+```
+
+### Example Error Output
+
+**Without AI:**
+```
+ERROR: Connection refused on localhost:3306
+```
+
+**With AI Analysis:**
+```
+ERROR: Connection refused on localhost:3306
+
+🤖 AI Troubleshooting Suggestions:
+
+1. MySQL service isn't running - try: sudo systemctl start mysql
+   Check status with: sudo systemctl status mysql
+
+2. Wrong port (3306 is default) - verify with: netstat -an | grep 3306
+   Your configuration may be using a different port.
+
+3. Firewall blocking connection - check: sudo ufw status
+   May need to allow port 3306: sudo ufw allow 3306/tcp
+
+4. Using 'localhost' vs '127.0.0.1' - try the other one
+   Some systems have different socket/TCP behaviors.
+```
+
+### Supported Error Types
+
+The AI analyzer provides smart suggestions for:
+- Connection errors (Elasticsearch, MySQL timeouts)
+- Authentication failures
+- Data format issues (JSON, CSV parsing)
+- Permission errors
+- Resource constraints (memory, disk)
+- Schema mismatches
+
 ## Creating Test Data
 
 ```python

@@ -1,7 +1,7 @@
 """
 Data pipeline with dependency injection - processes records from source to sink
 
-Author: Kevin McAllorum (kevin_mcallorum@linux.com)
+Author: Mac McAllorum (kevin_mcallorum@linux.com)
 GitHub: github.com/kmcallorum
 License: MIT
 """
@@ -10,6 +10,7 @@ import threading
 from queue import Queue
 from typing import Optional, Dict, Any
 from data_interfaces import DataSource, DataSink
+from error_analyzer import ErrorAnalyzer, NoOpErrorAnalyzer
 
 logger = logging.getLogger(__name__)
 
@@ -20,16 +21,19 @@ class DataPipeline:
     Uses dependency injection for testability.
     """
     
-    def __init__(self, source: DataSource, sink: DataSink, num_threads: int = 5):
+    def __init__(self, source: DataSource, sink: DataSink, num_threads: int = 5,
+                 error_analyzer: Optional[ErrorAnalyzer] = None):
         """
         Args:
             source: DataSource implementation
             sink: DataSink implementation  
             num_threads: Number of worker threads for parallel processing
+            error_analyzer: Optional ErrorAnalyzer for AI-powered troubleshooting
         """
         self.source = source
         self.sink = sink
         self.num_threads = num_threads
+        self.error_analyzer = error_analyzer or NoOpErrorAnalyzer()
         self.total_processed = 0
     
     def run(self, query_params: Optional[Dict[str, Any]] = None):
@@ -57,12 +61,27 @@ class DataPipeline:
     
     def _run_single_threaded(self, query_params: Optional[Dict[str, Any]]):
         """Single-threaded execution (safer for file-based sinks)"""
-        for record_id, content in self.source.fetch_records(query_params):
-            self.sink.insert_record(record_id, content)
-            self.total_processed += 1
-            
-            if self.total_processed % 100 == 0:
-                logger.info(f"Processed {self.total_processed} records")
+        try:
+            for record_id, content in self.source.fetch_records(query_params):
+                try:
+                    self.sink.insert_record(record_id, content)
+                    self.total_processed += 1
+                    
+                    if self.total_processed % 100 == 0:
+                        logger.info(f"Processed {self.total_processed} records")
+                except Exception as e:
+                    self._handle_error(e, {
+                        "operation": "sink_insert",
+                        "record_id": record_id,
+                        "total_processed": self.total_processed
+                    })
+                    # Continue processing other records
+        except Exception as e:
+            self._handle_error(e, {
+                "operation": "source_fetch",
+                "total_processed": self.total_processed
+            })
+            raise  # Re-raise source errors as they're fatal
     
     def _run_multi_threaded(self, query_params: Optional[Dict[str, Any]]):
         """Multi-threaded execution (for thread-safe sinks like MySQL)"""
@@ -123,3 +142,23 @@ class DataPipeline:
         """Clean up resources"""
         self.source.close()
         self.sink.close()
+    
+    def _handle_error(self, error: Exception, context: Dict[str, Any]):
+        """
+        Handle an error with optional AI analysis
+        
+        Args:
+            error: The exception that occurred
+            context: Context about where/when the error occurred
+        """
+        # Log the error
+        logger.error(f"Error in {context.get('operation', 'unknown')}: {error}")
+        
+        # Get AI suggestions if analyzer is enabled
+        if self.error_analyzer.is_enabled():
+            try:
+                suggestions = self.error_analyzer.analyze_error(error, context)
+                if suggestions:
+                    logger.info(f"\n{suggestions}\n")
+            except Exception as analysis_error:
+                logger.debug(f"Error analysis failed (non-critical): {analysis_error}")

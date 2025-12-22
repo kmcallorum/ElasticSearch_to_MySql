@@ -252,19 +252,19 @@ You can create your own analyzers:
 ```python
 from error_analyzer import ErrorAnalyzer
 
-class SlackErrorAnalyzer(ErrorAnalyzer):
-    """Send errors to Slack with AI analysis"""
+class TeamsErrorAnalyzer(ErrorAnalyzer):
+    """Send errors to Microsoft Teams with AI analysis"""
     
-    def __init__(self, slack_webhook, ai_analyzer):
-        self.slack_webhook = slack_webhook
+    def __init__(self, teams_webhook, ai_analyzer):
+        self.teams_webhook = teams_webhook
         self.ai = ai_analyzer
     
     def analyze_error(self, error, context):
         # Get AI suggestions
         suggestions = self.ai.analyze_error(error, context)
         
-        # Post to Slack
-        self.post_to_slack(error, suggestions)
+        # Post to Teams
+        self.post_to_teams(error, suggestions)
         
         return suggestions
     

@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-LOGFILE="/Users/kmcallo@optum.com/git/es-to-mysql-cli/daily_run.log"
+LOGFILE="daily_run.log"
 
 {
   echo "----- $(date '+%Y-%m-%d %H:%M:%S') START -----"
@@ -9,12 +9,12 @@ LOGFILE="/Users/kmcallo@optum.com/git/es-to-mysql-cli/daily_run.log"
   set -e
 
   # Load environment variables from a .env file if present
-  if [ -f /Users/kmcallo@optum.com/git/es-to-mysql-cli/.env ]; then
-    source /Users/kmcallo@optum.com/git/es-to-mysql-cli/.env
+  if [ -f .env ]; then
+    source .env
   fi
 
-  source /Users/kmcallo@optum.com/git/es-to-mysql-cli/.venv/bin/activate
-  cd /Users/kmcallo@optum.com/git/es-to-mysql-cli
+  source .venv/bin/activate
+  cd /es-to-mysql-cli
   python migrate.py \
     --es_url "$ES_URL" \
     --api_key "$API_KEY" \

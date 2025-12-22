@@ -292,7 +292,7 @@ open htmlcov/index.html
 5. **Open Source Ready** - Professional documentation
 6. **CI/CD Automated** - Tests run on every commit
 
-**This isn't theory. This is running in production at Optum.**
+**This isn't theory. This is running in production.**
 
 ---
 

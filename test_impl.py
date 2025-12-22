@@ -68,7 +68,7 @@ class CSVSource(DataSource):
         try:
             json.loads(text)
             return True
-        except:
+        except (json.JSONDecodeError, ValueError, TypeError):
             return False
     
     def close(self):
@@ -130,7 +130,7 @@ class FileSink(DataSink):
         try:
             json.loads(text)
             return True
-        except:
+        except (json.JSONDecodeError, ValueError, TypeError):
             return False
     
     def commit(self):

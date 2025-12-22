@@ -202,6 +202,29 @@ class TestErrorHandling:
         with pytest.raises(FileNotFoundError):
             pipeline.run()
     
+    def test_invalid_json_in_content_column(self, temp_dir):
+        """Test handling of invalid JSON in content column"""
+        csv_path = os.path.join(temp_dir, "invalid_json.csv")
+        output_path = os.path.join(temp_dir, "output.jsonl")
+        
+        # Create CSV with invalid JSON in content column
+        with open(csv_path, 'w', newline='') as f:
+            writer = csv.DictWriter(f, fieldnames=["id", "content"])
+            writer.writeheader()
+            writer.writerow({"id": "1", "content": "not valid json{{"})
+            writer.writerow({"id": "2", "content": '{"valid": "json"}'})
+        
+        source = CSVSource(csv_path, id_column="id", content_column="content")
+        sink = FileSink(output_path)
+        pipeline = DataPipeline(source, sink, num_threads=1)
+        
+        stats = pipeline.run()
+        pipeline.cleanup()
+        
+        # Both records should be inserted (invalid JSON wrapped in row JSON)
+        assert stats["inserted"] == 2
+        assert stats["errors"] == 0
+    
     def test_invalid_csv_structure(self, temp_dir):
         """Test handling of CSV with missing ID column"""
         csv_path = os.path.join(temp_dir, "invalid.csv")

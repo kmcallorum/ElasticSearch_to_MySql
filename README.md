@@ -117,18 +117,28 @@ python pipeline_cli.py \
 
 ```bash
 # Install pytest if needed
-pip install pytest
+pip install pytest pytest-cov
 
 # Run all tests
+pytest -v
+
+# Run specific test file
 pytest test_pipeline.py -v
+pytest test_production_impl.py -v
+pytest test_error_analyzer.py -v
 
 # Run specific test class
 pytest test_pipeline.py::TestDuplicateHandling -v
 
 # Run with coverage
-pip install pytest-cov
-pytest test_pipeline.py --cov=. --cov-report=html
+pytest --cov=. --cov-report=html --cov-report=term-missing
 ```
+
+**Test Files:**
+- `test_pipeline.py` - Core pipeline logic tests
+- `test_production_impl.py` - Production implementations (mocked ES/MySQL)
+- `test_error_analyzer.py` - Error analyzer tests
+- `custom_tests_example.py` - Domain-specific test examples
 
 ## 🤖 AI-Powered Error Analysis (NEW!)
 

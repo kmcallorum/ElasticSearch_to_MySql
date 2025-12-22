@@ -1,0 +1,6 @@
+[run]
+omit = 
+    custom_implementations.py
+    custom_tests_example.py
+    demo_error_analysis.py
+    generate_test_data.py

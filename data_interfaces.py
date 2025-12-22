@@ -26,12 +26,12 @@ class DataSource(ABC):
         Yields:
             Tuple[str, str]: (record_id, json_content)
         """
-        pass
+        pass  # pragma: no cover  ← Coverage ignores this line
     
     @abstractmethod
     def close(self):
         """Clean up any resources"""
-        pass
+        pass  # pragma: no cover  ← Coverage ignores this line
 
 
 class DataSink(ABC):
@@ -49,17 +49,17 @@ class DataSink(ABC):
         Returns:
             bool: True if inserted, False if skipped (duplicate)
         """
-        pass
+        pass  # pragma: no cover  ← Coverage ignores this line
     
     @abstractmethod
     def commit(self):
         """Commit any pending transactions"""
-        pass
+        pass  # pragma: no cover  ← Coverage ignores this line
     
     @abstractmethod
     def close(self):
         """Clean up any resources"""
-        pass
+        pass  # pragma: no cover  ← Coverage ignores this line
     
     @abstractmethod
     def get_stats(self) -> Dict[str, int]:
@@ -69,4 +69,4 @@ class DataSink(ABC):
         Returns:
             Dict with keys like 'inserted', 'skipped', 'errors'
         """
-        pass
+        pass  # pragma: no cover  ← Coverage ignores this line

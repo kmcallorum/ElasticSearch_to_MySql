@@ -379,5 +379,5 @@ class TestPipelineEdgeCases:
                 os.unlink(output_path)
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     pytest.main([__file__, "-v"])

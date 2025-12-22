@@ -4,3 +4,4 @@ omit =
     custom_tests_example.py
     demo_error_analysis.py
     generate_test_data.py
+    exclude_lines =   @abstractmethod

@@ -31,12 +31,12 @@ class ErrorAnalyzer(ABC):
         Returns:
             String with troubleshooting suggestions, or None if no analysis available
         """
-        pass
+        pass  # pragma: no cover  ← Coverage ignores this line
     
     @abstractmethod
     def is_enabled(self) -> bool:
         """Check if error analysis is enabled"""
-        pass
+        pass  # pragma: no cover  ← Coverage ignores this line
 
 
 class NoOpErrorAnalyzer(ErrorAnalyzer):

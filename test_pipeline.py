@@ -292,5 +292,5 @@ class TestPipelineIntegration:
 
 
 # Run tests with: pytest test_pipeline.py -v
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     pytest.main([__file__, "-v"])

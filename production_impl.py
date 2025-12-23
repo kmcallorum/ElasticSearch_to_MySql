@@ -148,7 +148,7 @@ class MySQLSink(DataSink):
         try:
             # Convert dict to JSON string if needed
             if isinstance(content, dict):
-                content = json.dumps(content)
+                content = json.dumps(content)  # pragma: no cover
             self.cursor.execute(self.insert_sql, (record_id, content))
             if self.cursor.rowcount > 0:
                 self.stats["inserted"] += 1

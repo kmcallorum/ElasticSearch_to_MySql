@@ -1,6 +1,6 @@
 # Start MySQL
 docker run --name test-mysql \
-  -e MYSQL_ROOT_PASSWORD=test123 \
+  -e MYSQL_ROOT_PASSWORD=${DB_TEST_PASSWORD}\
   -e MYSQL_DATABASE=testdb \
   -p 3306:3306 \
   -d mysql:8

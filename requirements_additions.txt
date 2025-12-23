@@ -1,0 +1,11 @@
+# Add these lines to your requirements.txt for coverage automation
+
+# Coverage and testing
+pytest>=7.4.0
+pytest-cov>=4.1.0
+
+# For parsing HTML coverage reports
+beautifulsoup4>=4.12.0
+
+# Optional: For generating coverage badges locally
+coverage-badge>=1.1.0

@@ -87,7 +87,7 @@ def build_query_params(args):
     params = {}
     
     if hasattr(args, 'match_all') and args.match_all:
-        params["query_type"] = "match_all"
+        params["match_all"] = True
     
     if hasattr(args, 'gte') and args.gte:
         params["gte"] = args.gte

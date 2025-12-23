@@ -97,8 +97,8 @@ class TestMetricsEndpoints:
                 assert "# HELP" in data or "# TYPE" in data or "pipeline_" in data
                 assert response.status == 200
                 
-            except Exception as e:
-                pytest.skip(f"Could not connect to server: {e}")
+            except Exception as e:  # pragma: no cover
+                pytest.skip(f"Could not connect to server: {e}")  # pragma: no cover
     
     def test_health_endpoint(self):
         """Test /health endpoint returns JSON"""
@@ -114,8 +114,8 @@ class TestMetricsEndpoints:
                 assert "version" in data
                 assert response.status == 200
                 
-            except Exception as e:
-                pytest.skip(f"Could not connect to server: {e}")
+            except Exception as e:  # pragma: no cover
+                pytest.skip(f"Could not connect to server: {e}")  # pragma: no cover
     
     def test_info_endpoint(self):
         """Test /info endpoint returns service info"""
@@ -131,12 +131,12 @@ class TestMetricsEndpoints:
                 assert "/metrics" in data["endpoints"]
                 assert response.status == 200
                 
-            except Exception as e:
-                pytest.skip(f"Could not connect to server: {e}")
+            except Exception as e:  # pragma: no cover
+                pytest.skip(f"Could not connect to server: {e}")  # pragma: no cover
     
     def test_root_endpoint(self):
         """Test / endpoint returns service info"""
-        with MetricsServer(port=9100) as server:
+        with MetricsServer(port=9200) as server:  # Changed to 9200 to avoid conflict
             time.sleep(0.2)  # Give server time to start
             
             try:
@@ -146,8 +146,8 @@ class TestMetricsEndpoints:
                 assert "service" in data
                 assert response.status == 200
                 
-            except Exception as e:
-                pytest.skip(f"Could not connect to server: {e}")
+            except Exception as e:  # pragma: no cover
+                pytest.skip(f"Could not connect to server: {e}")  # pragma: no cover
     
     def test_404_endpoint(self):
         """Test unknown endpoint returns 404"""
@@ -157,14 +157,14 @@ class TestMetricsEndpoints:
             try:
                 try:
                     urllib.request.urlopen(f"{server.get_url()}/unknown", timeout=2)
-                    pytest.fail("Should have raised HTTPError 404")
+                    pytest.fail("Should have raised HTTPError 404")  # pragma: no cover
                 except urllib.error.HTTPError as e:
                     assert e.code == 404
                     data = json.loads(e.read().decode('utf-8'))
                     assert "error" in data
                     
-            except Exception as e:
-                pytest.skip(f"Could not connect to server: {e}")
+            except Exception as e:  # pragma: no cover
+                pytest.skip(f"Could not connect to server: {e}")  # pragma: no cover
 
 
 class TestMetricsServerEdgeCases:

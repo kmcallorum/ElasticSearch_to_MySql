@@ -306,6 +306,6 @@ Questions about the test suite?
 
 ---
 
-*Generated with AI assistance for Mac McAllorum, Principal Engineer*  
+*Generated with AI assistance for Kevin McAllorum, Principal Engineer*  
 *Project: ES-MySQL Data Pipeline with Dependency Injection*  
 *December 22, 2025*

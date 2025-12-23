@@ -1,7 +1,7 @@
 # Journey to 100% Test Coverage: A Complete Guide
 
 **Date:** December 22, 2025  
-**Author:** Mac McAllorum, Principal Engineer  
+**Author:** Kevin McAllorum, Principal Engineer  
 **Goal:** Achieve 100% test coverage on enterprise-grade ES-MySQL pipeline  
 **Starting Point:** 87% coverage  
 **Final Result:** 95-100% coverage

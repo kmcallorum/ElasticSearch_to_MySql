@@ -6,7 +6,7 @@ Covers:
 2. Exception handlers in FileSink
 3. Exception handlers in JSONLSink
 
-Author: Mac McAllorum
+Author: Kevin McAllorum
 """
 import pytest
 import tempfile

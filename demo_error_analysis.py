@@ -5,7 +5,7 @@ Demo script showing AI-powered error analysis in action
 This script intentionally creates various errors to demonstrate
 how the AI error analyzer provides helpful troubleshooting suggestions.
 
-Author: Mac McAllorum (kevin_mcallorum@linux.com)
+Author: Kevin McAllorum (kevin_mcallorum@linux.com)
 """
 import sys
 import logging

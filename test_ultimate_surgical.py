@@ -6,7 +6,7 @@ Lines targeted:
 - pipeline.py: 270
 - pipeline_cli.py: 32-34
 
-Author: Mac McAllorum
+Author: Kevin McAllorum
 """
 import pytest
 import tempfile

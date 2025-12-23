@@ -7,7 +7,7 @@ These tests specifically target:
 - pipeline_cli.py: Error path
 - pipeline.py: Logging edge case
 
-Author: Mac McAllorum (kevin_mcallorum@linux.com)
+Author: Kevin McAllorum (kevin_mcallorum@linux.com)
 """
 import pytest
 import json

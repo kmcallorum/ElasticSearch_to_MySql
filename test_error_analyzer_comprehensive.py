@@ -3,7 +3,7 @@ Additional tests for error_analyzer.py to hit 100% coverage
 
 These tests specifically target the uncovered error handler methods
 
-Author: Mac McAllorum (kevin_mcallorum@linux.com)
+Author: Kevin McAllorum (kevin_mcallorum@linux.com)
 """
 import pytest
 import json

@@ -409,7 +409,7 @@ You now have everything you need to add world-class observability to your pipeli
 
 ---
 
-**Author:** Mac McAllorum & Claude  
+**Author:** Kevin McAllorum & Claude  
 **Date:** December 23, 2025  
 **Time:** ~2.5 hours  
 **Result:** Production-ready Prometheus integration  

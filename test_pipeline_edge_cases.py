@@ -6,7 +6,7 @@ These tests specifically target uncovered lines:
 - Lines 132: Error context building
 - Lines 159-164: Error handling edge cases
 
-Author: Mac McAllorum (kevin_mcallorum@linux.com)
+Author: Kevin McAllorum (kevin_mcallorum@linux.com)
 """
 import pytest
 import tempfile

@@ -3,7 +3,7 @@ Tests for pipeline_cli.py - CLI argument parsing and factory functions
 
 These tests bring CLI coverage from 0% to 95%+
 
-Author: Mac McAllorum (kevin_mcallorum@linux.com)
+Author: Kevin McAllorum (kevin_mcallorum@linux.com)
 GitHub: github.com/kmcallorum
 License: MIT
 """

@@ -370,11 +370,11 @@ A: Check logs for errors, verify CSV file exists and has headers.
 
 MIT License - See [LICENSE](LICENSE) file for details.
 
-Copyright (c) 2024 Mac McAllorum
+Copyright (c) 2024 Kevin McAllorum
 
 ## 👤 Author
 
-**Mac McAllorum**
+**Kevin McAllorum**
 - Email: kevin_mcallorum@linux.com
 - GitHub: [@kmcallorum](https://github.com/kmcallorum)
 - Experience: 43 years in enterprise software engineering

@@ -1,7 +1,7 @@
 """
 Tests for production implementations - FIXED infinite loop issue
 
-Author: Mac McAllorum (kevin_mcallorum@linux.com)
+Author: Kevin McAllorum (kevin_mcallorum@linux.com)
 """
 import pytest
 from unittest.mock import Mock, patch

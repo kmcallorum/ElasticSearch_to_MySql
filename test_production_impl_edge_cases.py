@@ -6,7 +6,7 @@ These tests target uncovered lines:
 - Lines 84-85: Query building edge cases  
 - Line 102: Error handling in scroll
 
-Author: Mac McAllorum (kevin_mcallorum@linux.com)
+Author: Kevin McAllorum (kevin_mcallorum@linux.com)
 """
 import pytest
 from unittest.mock import Mock, patch

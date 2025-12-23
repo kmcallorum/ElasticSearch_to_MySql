@@ -3,7 +3,7 @@ THE SIMPLEST TEST FOR LINE 171
 
 Just patch is_alive() at the class level to FORCE line 171 execution.
 
-Author: Mac McAllorum
+Author: Kevin McAllorum
 """
 import pytest
 import time

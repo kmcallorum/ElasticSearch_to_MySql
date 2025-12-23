@@ -5,7 +5,7 @@ Targeting:
 - error_analyzer.py: Uncalled handler methods (_json_decode_help, _mysql_error_help, _elasticsearch_error_help)
 - test_impl.py: The bare except clause that needs proper exception types
 
-Author: Mac McAllorum (kevin_mcallorum@linux.com)
+Author: Kevin McAllorum (kevin_mcallorum@linux.com)
 """
 import pytest
 import json

@@ -3,7 +3,7 @@ THE ABSOLUTE FINAL LINE - Line 132 in pipeline.py
 
 Covers: Multi-threaded worker when insert returns False (skipped)
 
-Author: Mac McAllorum
+Author: Kevin McAllorum
 """
 import pytest
 import tempfile

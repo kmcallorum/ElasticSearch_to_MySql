@@ -1,7 +1,7 @@
 """
 Error analysis system with AI-powered troubleshooting suggestions
 
-Author: Mac McAllorum (kevin_mcallorum@linux.com)
+Author: Kevin McAllorum (kevin_mcallorum@linux.com)
 GitHub: github.com/kmcallorum
 License: MIT
 """

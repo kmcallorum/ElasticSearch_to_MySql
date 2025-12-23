@@ -3,7 +3,7 @@ Tests for metrics integration in pipeline and CLI
 
 Covers the instrumented code paths to achieve 100% coverage.
 
-Author: Mac McAllorum
+Author: Kevin McAllorum
 """
 import pytest
 import tempfile

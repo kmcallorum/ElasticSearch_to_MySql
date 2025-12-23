@@ -3,7 +3,7 @@ Additional CLI tests for 100% coverage
 
 Tests edge cases and error paths in pipeline_cli.py
 
-Author: Mac McAllorum
+Author: Kevin McAllorum
 """
 import pytest
 from unittest.mock import Mock, patch, MagicMock

@@ -3,7 +3,7 @@ Surgical tests to achieve 100% coverage - targeting the last 17 lines
 
 These tests target very specific edge cases and error paths.
 
-Author: Mac McAllorum
+Author: Kevin McAllorum
 """
 import pytest
 import tempfile

@@ -3,7 +3,7 @@ Tests for Prometheus metrics HTTP server
 
 Maintains 100% test coverage!
 
-Author: Mac McAllorum (kevin_mcallorum@linux.com)
+Author: Kevin McAllorum (kevin_mcallorum@linux.com)
 """
 import pytest
 import time

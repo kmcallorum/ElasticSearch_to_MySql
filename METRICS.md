@@ -487,7 +487,7 @@ With metrics enabled, you can:
 
 ---
 
-**Author:** Mac McAllorum (kevin_mcallorum@linux.com)  
+**Author:** Kevin McAllorum (kevin_mcallorum@linux.com)  
 **License:** MIT  
 **Version:** 1.0.0
 

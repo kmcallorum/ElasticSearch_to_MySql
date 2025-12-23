@@ -6,7 +6,7 @@ Provides HTTP endpoints for Prometheus scraping:
 - GET /health - Health check endpoint
 - GET / - Basic info page
 
-Author: Mac McAllorum (kevin_mcallorum@linux.com)
+Author: Kevin McAllorum (kevin_mcallorum@linux.com)
 GitHub: github.com/kmcallorum
 License: MIT
 """
@@ -64,7 +64,7 @@ class MetricsHandler(BaseHTTPRequestHandler):
         info = {
             "service": "ES-MySQL Pipeline Metrics",
             "version": "1.0.0",
-            "author": "Mac McAllorum",
+            "author": "Kevin McAllorum",
             "endpoints": {
                 "/metrics": "Prometheus metrics (for scraping)",
                 "/health": "Health check endpoint",

@@ -4,7 +4,7 @@ Additional tests for pipeline.py multi-threaded execution
 These tests specifically cover the multi-threaded code paths that were 
 previously untested, bringing coverage from 50% to ~80%+
 
-Author: Mac McAllorum (kevin_mcallorum@linux.com)
+Author: Kevin McAllorum (kevin_mcallorum@linux.com)
 GitHub: github.com/kmcallorum
 License: MIT
 """

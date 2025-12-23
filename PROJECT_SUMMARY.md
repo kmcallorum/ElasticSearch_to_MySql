@@ -5,7 +5,7 @@
 [![Tests](https://github.com/kmcallorum/ElasticSearch_to_MySql/actions/workflows/tests.yml/badge.svg)](https://github.com/kmcallorum/ElasticSearch_to_MySql/actions/workflows/tests.yml)
 [![Tests](https://img.shields.io/badge/tests-pytest-green.svg)](https://docs.pytest.org/)
 
-**Author:** Mac McAllorum (kevin_mcallorum@linux.com)  
+**Author:** Kevin McAllorum (kevin_mcallorum@linux.com)  
 **GitHub:** [github.com/kmcallorum](https://github.com/kmcallorum)
 
 > Built by a Principal Engineer with 43 years of enterprise software experience, including work at Bell Labs (DSL technology) and Bank of New York (stock market systems) on critical infrastructure achieving 99.9% uptime.
@@ -345,7 +345,7 @@ To add a new data source or sink:
 
 MIT License - See [LICENSE](LICENSE) file for details.
 
-Copyright (c) 2024 Mac McAllorum
+Copyright (c) 2024 Kevin McAllorum
 
 ## 🙏 Credits
 

@@ -3,7 +3,7 @@ Data pipeline with dependency injection and Prometheus metrics
 
 Processes records from source to sink with optional metrics collection.
 
-Author: Mac McAllorum (kevin_mcallorum@linux.com)
+Author: Kevin McAllorum (kevin_mcallorum@linux.com)
 GitHub: github.com/kmcallorum
 License: MIT
 """

@@ -7,7 +7,7 @@ Provides comprehensive observability for:
 - Resource utilization (workers, queue depth)
 - Error tracking (by type and severity)
 
-Author: Mac McAllorum (kevin_mcallorum@linux.com)
+Author: Kevin McAllorum (kevin_mcallorum@linux.com)
 GitHub: github.com/kmcallorum
 License: MIT
 """
@@ -242,7 +242,7 @@ def get_metrics_summary() -> Dict[str, Any]:
 # Initialize pipeline info on module load
 set_pipeline_info(
     version="1.0.0",
-    author="Mac McAllorum",
+    author="Kevin McAllorum",
     project="es-to-mysql-pipeline"
 )
 

@@ -1,7 +1,7 @@
 """
 CLI entry point with dependency injection and Prometheus metrics support
 
-Author: Mac McAllorum (kevin_mcallorum@linux.com)
+Author: Kevin McAllorum (kevin_mcallorum@linux.com)
 GitHub: github.com/kmcallorum
 License: MIT
 """

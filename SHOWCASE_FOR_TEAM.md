@@ -1,6 +1,6 @@
 # Dependency Injection & AI-Powered Development Showcase
 
-**Author:** Mac McAllorum, Principal Engineer  
+**Author:** Kevin McAllorum, Principal Engineer  
 **Purpose:** Demonstrating enterprise-grade dependency injection with comprehensive test coverage  
 **For:** Team presentation on modern software engineering practices
 

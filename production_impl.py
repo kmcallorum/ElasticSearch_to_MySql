@@ -143,9 +143,12 @@ class MySQLSink(DataSink):
         self.insert_sql = f"INSERT IGNORE INTO {table} (id, content) VALUES (%s, %s)"
         logger.info(f"MySQLSink initialized for table {table} in database {database}")
     
-    def insert_record(self, record_id: str, content: str) -> bool:
+    def insert_record(self, record_id: str, content: Any) -> bool:
         """Insert a record, returns True if inserted, False if skipped"""
         try:
+            # Convert dict to JSON string if needed
+            if isinstance(content, dict):
+                content = json.dumps(content)
             self.cursor.execute(self.insert_sql, (record_id, content))
             if self.cursor.rowcount > 0:
                 self.stats["inserted"] += 1

@@ -111,7 +111,54 @@ class ClaudeErrorAnalyzer(ErrorAnalyzer):
         except Exception as e:
             logger.error(f"Error during AI analysis (non-critical): {e}")
             return None
+
+    def analyze_errors(self, operation: str, error_count: int, context: Dict[str, Any]) -> str:
+        """
+        Analyze aggregate errors from pipeline execution
+        Args:
+           operation: What operation failed (e.g., "pipeline_execution")
+           error_count: Total number of errors
+           context: Additional context (source_type, sink_type, success_rate, etc.)
     
+        Returns:
+           AI-generated analysis and recommendations
+        """
+        import anthropic
+        import os
+
+        api_key = os.environ.get('ANTHROPIC_API_KEY')
+        if not api_key:
+            return "Error: ANTHROPIC_API_KEY environment variable not set"
+
+        client = anthropic.Anthropic(api_key=api_key)
+
+        # Build the prompt
+        prompt = f"""You are a database and ETL pipeline expert. Analyze this error scenario and provide actionable recommendations.
+
+           Operation: {operation}
+           Error Count: {error_count}
+           Context: {context}
+
+           Based on this information, provide:
+             1. Most likely root cause
+             2. Impact assessment  
+             3. Specific steps to resolve
+             4. Prevention strategies
+
+           Keep the response concise and actionable."""
+
+        try:
+            message = client.messages.create(
+                model="claude-sonnet-4-20250514",
+                max_tokens=1000,
+                messages=[{"role": "user", "content": prompt}]
+             )
+
+            return message.content[0].text
+
+        except Exception as e:
+            return f"AI analysis failed: {str(e)}"
+        
     def _build_prompt(self, error_type: str, error_message: str, 
                      error_traceback: str, context: Dict[str, Any]) -> str:
         """Build the prompt for Claude"""

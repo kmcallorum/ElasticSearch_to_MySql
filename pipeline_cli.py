@@ -13,6 +13,7 @@ from pipeline import DataPipeline
 from production_impl import ElasticsearchSource, MySQLSink
 from test_impl import CSVSource, FileSink, JSONLSink
 from error_analyzer import ClaudeErrorAnalyzer, SimpleErrorAnalyzer, NoOpErrorAnalyzer
+from jsonl_source import JSONLSource
 
 # Configure logging
 logging.basicConfig(
@@ -50,6 +51,12 @@ def create_source(args):
             id_column=args.csv_id_column,
             content_column=args.csv_content_column
         )
+    elif args.source_type == "jsonl":
+        return JSONLSource(
+            filepath=args.jsonl_file,
+            id_field=args.jsonl_id_field,
+            content_field=args.jsonl_content_field
+    )
     else:
         raise ValueError(f"Unknown source type: {args.source_type}")
 
@@ -108,7 +115,7 @@ def main():
     
     # Source/Sink selection
     parser.add_argument("--source_type", required=True, 
-                       choices=["elasticsearch", "csv"],
+                       choices=["elasticsearch", "csv", "jsonl"],
                        help="Type of data source")
     parser.add_argument("--sink_type", required=True,
                        choices=["mysql", "file", "jsonl"],
@@ -159,6 +166,10 @@ def main():
                        help="Enable Prometheus metrics server on specified port (e.g., 8000)")
     parser.add_argument("--metrics-host", default="0.0.0.0",
                        help="Host for metrics server (default: 0.0.0.0)")
+    
+    parser.add_argument('--jsonl_file', help='Path to JSONL file')
+    parser.add_argument('--jsonl_id_field', default='id')
+    parser.add_argument('--jsonl_content_field', default='content')
     
     args = parser.parse_args()
     
@@ -222,7 +233,30 @@ def main():
         if args.metrics_port:
             logger.info(f"Metrics: http://{args.metrics_host}:{args.metrics_port}/metrics")
         logger.info("=" * 60)
-        
+        # AI Error Analysis (NEW CODE)
+        if stats['errors'] > 0 and error_analyzer and hasattr(error_analyzer, 'analyze_errors'):
+            logger.info("")
+            logger.info("=" * 60)
+            logger.info("AI ERROR ANALYSIS")
+            logger.info("=" * 60)
+
+            try:
+                analysis = error_analyzer.analyze_errors(
+                    operation="pipeline_execution",
+                    error_count=stats['errors'],
+                    context={
+                        "source_type": args.source_type,
+                        "sink_type": args.sink_type,
+                        "total_records": stats['inserted'] + stats['skipped'] + stats['errors'],
+                        "success_rate": f"{(stats['inserted'] / (stats['inserted'] + stats['errors']) * 100):.1f}%" if (stats['inserted'] + stats['errors']) > 0 else "0%"
+                    }
+                )
+
+                logger.info(f"\n{analysis}\n")
+                logger.info("=" * 60)
+            except Exception as e:
+                logger.error(f"AI analysis failed: {e}")
+
         # Keep metrics server running if requested (for Prometheus to scrape)
         if metrics_server and metrics_server.is_running():
             logger.info("\nMetrics server still running for Prometheus scraping...")

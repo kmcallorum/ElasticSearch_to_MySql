@@ -1,0 +1,59 @@
+{
+  "name": "Test Data",
+  "description": "This would describe the test data and its purpose.",
+  "elasticsearch": {
+    "index_pattern": "whatever scan pattern you use",
+    "id_field": "_id",
+    "timestamp_field": "@timestamp"
+  },
+  "sample_document": {
+    "@version": "1",
+    "eventData": {
+      "type": "pipeline.quality_scan.generic",
+      "status": "success",
+      "duration_ms": 0,
+      "timestamp_ms": 1609840946994,
+      "reportingTool": "Source of what api has been used to generate the data",
+      "reportingToolURL": "https://whatever url you use"
+    },
+    "@timestamp": "2021-01-05T10:02:44.964Z",
+    "fortifyData": {
+      "scanType": "full",
+      "fortifyIssues": "Critical-102/High-21/Medium-6/Low:1553",
+      "scarProjectName": "your project name",
+      "fortifyBuildName": "46089",
+      "scarProjectVersion": "the project version",
+      "translateExclusions": "none"
+    },
+    "pipelineData": {
+      "askId": ["specific field from an example pipeline"],
+      "gitURL": "https://your git url",
+      "caAgileId": "unknown",
+      "eventTool": "your tool",
+      "gitBranch": "github branch",
+      "gitCommit": "commit hash",
+      "isTestMode": false,
+      "pipelineId": "id to pipeline",
+      "projectKey": "a project key",
+      "eventToolVersion": "Source tool version"
+    },
+    "qualityScanData": {
+      "resultsURL": "https://url to the quality scan results"
+    }
+  },
+  "variation_rules": {
+    "eventData.duration_ms": {"type": "random_int", "min": 0, "max": 1000},
+    "eventData.timestamp_ms": {"type": "increment", "start": 1609840946994, "step": 1000},
+    "eventData.status": {"type": "random_choice", "values": ["success", "failure"], "weights": [0.9, 0.1]},
+    "fortifyData.fortifyBuildName": {"type": "increment", "start": 46089},
+    "fortifyData.fortifyIssues": {"type": "random_choice", "values": [
+      "Critical-102/High-21/Medium-6/Low:1553",
+      "Critical-50/High-10/Medium-3/Low:800",
+      "Critical-200/High-50/Medium-20/Low:2000",
+      "Critical-15/High-5/Medium-2/Low:300"
+    ]},
+    "pipelineData.gitCommit": {"type": "random_hex", "length": 40},
+    "pipelineData.gitBranch": {"type": "random_choice", "values": ["main", "develop", "feature", "hotfix"]},
+    "pipelineData.isTestMode": {"type": "random_choice", "values": [false, true], "weights": [0.8, 0.2]}
+  }
+}

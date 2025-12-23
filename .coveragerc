@@ -5,3 +5,15 @@ omit =
     demo_error_analysis.py
     generate_test_data.py
     exclude_lines =   @abstractmethod
+[report]
+exclude_lines =
+    pragma: no cover
+    def __repr__
+    raise AssertionError
+    raise NotImplementedError
+    @abstractmethod
+    @abc.abstractmethod
+    ^\s*pass\s*$
+    if __name__ == .__main__.:
+    # Exclude Claude API (optional feature requiring API key)
+    class ClaudeErrorAnalyzer

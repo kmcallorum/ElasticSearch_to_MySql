@@ -171,7 +171,7 @@ class JSONLSink(DataSink):
             # Parse content if it's JSON, otherwise wrap it
             try:
                 content_obj = json.loads(content)
-            except:
+            except (json.JSONDecodeError, ValueError, TypeError):
                 content_obj = {"raw": content}
             
             record = {"id": record_id, **content_obj}

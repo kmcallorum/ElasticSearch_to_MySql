@@ -118,7 +118,7 @@ class TestClaudeErrorAnalyzer:
         # Temporarily clear env var
         old_key = os.environ.get("ANTHROPIC_API_KEY")
         if old_key:
-            del os.environ["ANTHROPIC_API_KEY"]
+            del os.environ["ANTHROPIC_API_KEY"] # pragma: no cover
         
         analyzer = ClaudeErrorAnalyzer()
         
@@ -126,7 +126,7 @@ class TestClaudeErrorAnalyzer:
         
         # Restore env var
         if old_key:
-            os.environ["ANTHROPIC_API_KEY"] = old_key
+            os.environ["ANTHROPIC_API_KEY"] = old_key # pragma: no cover
     
     def test_enabled_with_api_key(self):
         """Analyzer should be enabled with API key"""
@@ -137,7 +137,7 @@ class TestClaudeErrorAnalyzer:
         """Should return None when no API key"""
         old_key = os.environ.get("ANTHROPIC_API_KEY")
         if old_key:
-            del os.environ["ANTHROPIC_API_KEY"]
+            del os.environ["ANTHROPIC_API_KEY"] # pragma: no cover
         
         analyzer = ClaudeErrorAnalyzer()
         error = ValueError("test")
@@ -147,7 +147,7 @@ class TestClaudeErrorAnalyzer:
         assert result is None
         
         if old_key:
-            os.environ["ANTHROPIC_API_KEY"] = old_key
+            os.environ["ANTHROPIC_API_KEY"] = old_key # pragma: no cover
     
     def test_builds_proper_prompt(self):
         """Test that prompt is built correctly"""

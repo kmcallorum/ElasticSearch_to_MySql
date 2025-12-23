@@ -1,0 +1,79 @@
+# Prometheus Configuration for ES-MySQL Pipeline
+#
+# Usage:
+#   prometheus --config.file=prometheus.example.yml
+#
+# Then visit: http://localhost:9090
+
+global:
+  scrape_interval: 15s      # How often to scrape targets
+  evaluation_interval: 15s  # How often to evaluate alert rules
+  
+  # Attach these labels to all time series
+  external_labels:
+    monitor: 'es-mysql-pipeline'
+    environment: 'production'
+
+# Alertmanager configuration (optional)
+# alerting:
+#   alertmanagers:
+#     - static_configs:
+#         - targets: ['localhost:9093']
+
+# Load alert rules (optional)
+# rule_files:
+#   - "alerts.yml"
+
+# Scrape configurations
+scrape_configs:
+  # ES-MySQL Pipeline metrics
+  - job_name: 'es-mysql-pipeline'
+    
+    # Scrape interval for this job (overrides global)
+    scrape_interval: 15s
+    scrape_timeout: 10s
+    
+    # Metrics path (default is /metrics)
+    metrics_path: /metrics
+    
+    # Static targets
+    static_configs:
+      - targets:
+          - 'localhost:8000'  # Pipeline metrics server
+        labels:
+          instance: 'pipeline-1'
+          datacenter: 'dc1'
+    
+    # Optional: Add authentication
+    # basic_auth:
+    #   username: 'prometheus'
+    #   password: 'secret'
+    
+    # Optional: Add custom headers
+    # headers:
+    #   X-Custom-Header: value
+
+  # Example: Multiple pipeline instances
+  # - job_name: 'pipelines-production'
+  #   static_configs:
+  #     - targets:
+  #         - 'pipeline1.example.com:8000'
+  #         - 'pipeline2.example.com:8000'
+  #         - 'pipeline3.example.com:8000'
+  #       labels:
+  #         environment: 'production'
+  #         region: 'us-east-1'
+  
+  # Example: Kubernetes service discovery
+  # - job_name: 'kubernetes-pipelines'
+  #   kubernetes_sd_configs:
+  #     - role: pod
+  #   relabel_configs:
+  #     - source_labels: [__meta_kubernetes_pod_label_app]
+  #       action: keep
+  #       regex: es-mysql-pipeline
+
+  # Prometheus self-monitoring
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']

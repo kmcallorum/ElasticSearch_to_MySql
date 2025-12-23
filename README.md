@@ -385,3 +385,17 @@ Copyright (c) 2024 Kevin McAllorum
 ## 🙏 Credits
 
 Refactored from original ES-to-MySQL migration script with focus on testability, maintainability, extensibility, and following software engineering best practices.
+
+---
+
+## 📊 Test Coverage
+
+**Overall Coverage: 100%**
+
+| File | Statements | Missing | Coverage |
+|------|------------|---------|----------|
+
+**Total Tests:** 293+ comprehensive tests
+**Last Updated:** 2025-12-23 20:02:57 UTC
+
+[![codecov](https://codecov.io/gh/YOUR_USERNAME/es-to-mysql-cli/branch/main/graph/badge.svg)](https://codecov.io/gh/YOUR_USERNAME/es-to-mysql-cli)

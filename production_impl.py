@@ -11,6 +11,8 @@ import mysql.connector
 import logging
 from typing import Iterator, Tuple, Dict, Any, Optional
 from data_interfaces import DataSource, DataSink
+import threading
+import mysql.connector.pooling
 
 logger = logging.getLogger(__name__)
 
@@ -120,59 +122,79 @@ class ElasticsearchSource(DataSource):
 
 class MySQLSink(DataSink):
     """Production MySQL data sink with thread-safe operations"""
-    
+    import threading
+
+
+class MySQLSink(DataSink):
+    """Production MySQL data sink with TRUE thread-safety"""
+
     def __init__(self, host: str, user: str, password: str, database: str, table: str):
         self.host = host
         self.user = user
         self.password = password
         self.database = database
         self.table = table
-        
-        self.conn = mysql.connector.connect(
-            host=host, user=user, password=password, database=database
+
+        # CREATE CONNECTION POOL (thread-safe!)
+        self.pool = mysql.connector.pooling.MySQLConnectionPool(
+            pool_name="pipeline_pool",
+            pool_size=10,  # Adjust based on num_threads
+            host=host,
+            user=user,
+            password=password,
+            database=database
         )
-        self.cursor = self.conn.cursor()
-        
-        self.stats = {
-            "inserted": 0,
-            "skipped": 0,
-            "errors": 0
-        }
-        
+
+        # Thread-safe stats with lock
+        self.stats = {"inserted": 0, "skipped": 0, "errors": 0}
+        self.stats_lock = threading.Lock()
+
         # Prepare insert statement
         self.insert_sql = f"INSERT IGNORE INTO {table} (id, content) VALUES (%s, %s)"
-        logger.info(f"MySQLSink initialized for table {table} in database {database}")
-    
+        logger.info(f"MySQLSink initialized with connection pool (size: 10)")  # ← NEW MESSAGE
+
     def insert_record(self, record_id: str, content: Any) -> bool:
-        """Insert a record, returns True if inserted, False if skipped"""
+        """Thread-safe insert using pooled connection"""
+        # Get connection from pool (different for each thread)
+        conn = self.pool.get_connection()
+        cursor = conn.cursor()
+
         try:
             # Convert dict to JSON string if needed
             if isinstance(content, dict):
-                content = json.dumps(content)  # pragma: no cover
-            self.cursor.execute(self.insert_sql, (record_id, content))
-            if self.cursor.rowcount > 0:
-                self.stats["inserted"] += 1
-                return True
-            else:
-                self.stats["skipped"] += 1
-                return False
+                content = json.dumps(content)
+
+            cursor.execute(self.insert_sql, (record_id, content))
+            conn.commit()
+
+            # Update stats with lock (thread-safe)
+            with self.stats_lock:
+                if cursor.rowcount > 0:
+                    self.stats["inserted"] += 1
+                    return True
+                else:
+                    self.stats["skipped"] += 1
+                    return False
+
         except Exception as e:
-            self.stats["errors"] += 1
-            logger.error(f"Error inserting ID {record_id}: {e}")
+            with self.stats_lock:
+                self.stats["errors"] += 1
+            logger.error(f"Error inserting {record_id}: {e}")
             return False
-    
+
+        finally:
+            cursor.close()
+            conn.close()  # Returns to pool, doesn't actually close
+
     def commit(self):
-        """Commit the transaction"""
-        self.conn.commit()
-        logger.info(f"Committed transaction. Stats: {self.stats}")
-    
+        """No-op with per-record commits"""
+        logger.info(f"Stats at commit: {self.stats}")
+
     def close(self):
-        """Close database connections"""
-        self.commit()
-        self.cursor.close()
-        self.conn.close()
+        """Close connection pool"""
         logger.info(f"MySQLSink closed. Final stats: {self.stats}")
-    
+
     def get_stats(self) -> Dict[str, int]:
-        """Get operation statistics"""
-        return self.stats.copy()
+        """Thread-safe stats"""
+        with self.stats_lock:
+            return self.stats.copy()

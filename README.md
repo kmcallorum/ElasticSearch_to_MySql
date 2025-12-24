@@ -396,6 +396,6 @@ Refactored from original ES-to-MySQL migration script with focus on testability,
 |------|------------|---------|----------|
 
 **Total Tests:** 293+ comprehensive tests
-**Last Updated:** 2025-12-23 20:16:09 UTC
+**Last Updated:** 2025-12-23 20:18:06 UTC
 
 [![codecov](https://codecov.io/gh/YOUR_USERNAME/es-to-mysql-cli/branch/main/graph/badge.svg)](https://codecov.io/gh/YOUR_USERNAME/es-to-mysql-cli)

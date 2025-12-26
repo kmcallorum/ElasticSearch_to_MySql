@@ -1,0 +1,104 @@
+name: Python Tests
+
+on:
+  push:
+    branches: [ main, master, develop ]
+  pull_request:
+    branches: [ main, master, develop ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: testpassword
+          MYSQL_DATABASE: testdb
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h localhost"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    strategy:
+      matrix:
+        python-version: ['3.10', '3.11', '3.12']
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Cache pip packages
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements*.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
+        pip install pytest pytest-cov
+
+    - name: Wait for MySQL
+      run: |
+        echo "Waiting for MySQL to be ready..."
+        for i in {1..30}; do
+          if mysqladmin ping -h"127.0.0.1" -P3306 -uroot -ptestpassword --silent; then
+            echo "MySQL is ready!"
+            break
+          fi
+          echo "Waiting for MySQL... attempt $i"
+          sleep 2
+        done
+
+    - name: Setup MySQL test database
+      run: |
+        mysql -h 127.0.0.1 -P 3306 -uroot -ptestpassword -e "
+          CREATE DATABASE IF NOT EXISTS testdb;
+          USE testdb;
+          CREATE TABLE IF NOT EXISTS records (
+            id VARCHAR(255) PRIMARY KEY,
+            content JSON NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+          );
+          SHOW TABLES;
+        "
+
+    - name: Run tests with pytest
+      env:
+        MYSQL_HOST: 127.0.0.1
+        MYSQL_PORT: 3306
+        MYSQL_USER: root
+        MYSQL_PASSWORD: testpassword
+        MYSQL_DATABASE: testdb
+      run: |
+        pytest -v --tb=short --cov=. --cov-report=term-missing
+
+    - name: Generate coverage report
+      if: matrix.python-version == '3.10'
+      run: |
+        coverage xml
+        coverage html
+
+    - name: Upload coverage to Codecov (optional)
+      if: matrix.python-version == '3.10'
+      uses: codecov/codecov-action@v4
+      continue-on-error: true
+      with:
+        file: ./coverage.xml
+        flags: unittests
+        name: codecov-umbrella
+        fail_ci_if_error: false

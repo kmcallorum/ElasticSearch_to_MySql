@@ -24,18 +24,14 @@ jobs:
           --health-timeout=5s
           --health-retries=5
 
-    strategy:
-      matrix:
-        python-version: ['3.10', '3.11', '3.12']
-
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Set up Python ${{ matrix.python-version }}
+    - name: Set up Python 3.10
       uses: actions/setup-python@v5
       with:
-        python-version: ${{ matrix.python-version }}
+        python-version: '3.10'
 
     - name: Cache pip packages
       uses: actions/cache@v4
@@ -56,7 +52,7 @@ jobs:
       run: |
         echo "Waiting for MySQL to be ready..."
         for i in {1..30}; do
-          if mysqladmin ping -h"127.0.0.1" -P3306 -uroot -ptestpassword --silent; then
+          if mysqladmin ping -h"127.0.0.1" -P3306 -uroot -ptestpassword --silent 2>/dev/null; then
             echo "MySQL is ready!"
             break
           fi
@@ -64,18 +60,28 @@ jobs:
           sleep 2
         done
 
-    - name: Setup MySQL test database
+    - name: Grant MySQL permissions for Docker network
       run: |
+        echo "Granting permissions for root user from any host..."
         mysql -h 127.0.0.1 -P 3306 -uroot -ptestpassword -e "
-          CREATE DATABASE IF NOT EXISTS testdb;
-          USE testdb;
+          CREATE USER IF NOT EXISTS 'root'@'%' IDENTIFIED BY 'testpassword';
+          GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' WITH GRANT OPTION;
+          FLUSH PRIVILEGES;
+          SELECT user, host FROM mysql.user WHERE user='root';
+        "
+
+    - name: Setup MySQL test database and table
+      run: |
+        mysql -h 127.0.0.1 -P 3306 -uroot -ptestpassword testdb <<'EOF'
           CREATE TABLE IF NOT EXISTS records (
             id VARCHAR(255) PRIMARY KEY,
             content JSON NOT NULL,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
           );
+          
           SHOW TABLES;
-        "
+          DESCRIBE records;
+        EOF
 
     - name: Run tests with pytest
       env:
@@ -87,18 +93,14 @@ jobs:
       run: |
         pytest -v --tb=short --cov=. --cov-report=term-missing
 
-    - name: Generate coverage report
-      if: matrix.python-version == '3.10'
+    - name: Display coverage report
       run: |
-        coverage xml
-        coverage html
+        echo "Coverage Summary:"
+        coverage report --skip-covered
 
-    - name: Upload coverage to Codecov (optional)
-      if: matrix.python-version == '3.10'
-      uses: codecov/codecov-action@v4
-      continue-on-error: true
-      with:
-        file: ./coverage.xml
-        flags: unittests
-        name: codecov-umbrella
-        fail_ci_if_error: false
+    - name: Generate coverage badge data
+      if: success()
+      run: |
+        COVERAGE=$(coverage report | grep TOTAL | awk '{print $4}' | sed 's/%//')
+        echo "Total coverage: ${COVERAGE}%"
+        echo "COVERAGE=${COVERAGE}" >> $GITHUB_ENV

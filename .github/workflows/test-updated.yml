@@ -60,19 +60,33 @@ jobs:
           sleep 2
         done
 
-    - name: Configure MySQL permissions for Docker network
+    - name: Configure MySQL for network access (aggressive fix)
       run: |
         echo "Configuring MySQL to accept connections from Docker network..."
+
+        # Show current users
+        echo "Current MySQL users:"
+        mysql -h 127.0.0.1 -P 3306 -uroot -ptestpassword -e "SELECT user, host FROM mysql.user WHERE user='root';"
+
+        # Drop root@'%' if it exists, then create it fresh
         mysql -h 127.0.0.1 -P 3306 -uroot -ptestpassword <<'EOF'
-          -- Create root@'%' if it doesn't exist, then ensure password is set
-          CREATE USER IF NOT EXISTS 'root'@'%';
-          ALTER USER 'root'@'%' IDENTIFIED BY 'testpassword';
+          -- Drop if exists to start fresh
+          DROP USER IF EXISTS 'root'@'%';
+
+          -- Create new root@'%' with mysql_native_password for compatibility
+          CREATE USER 'root'@'%' IDENTIFIED WITH mysql_native_password BY 'testpassword';
+
+          -- Grant all privileges
           GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' WITH GRANT OPTION;
+
+          -- Apply changes
           FLUSH PRIVILEGES;
 
-          -- Show configured users
-          SELECT user, host FROM mysql.user WHERE user='root';
+          -- Verify
+          SELECT user, host, plugin FROM mysql.user WHERE user='root';
         EOF
+
+        echo "MySQL configuration complete!"
 
     - name: Setup MySQL test database and table
       run: |

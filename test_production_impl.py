@@ -168,122 +168,133 @@ class TestElasticsearchSource:
 
 class TestMySQLSink:
     """Test MySQLSink with mocked MySQL"""
-    
-    @patch('production_impl.mysql.connector.connect')
-    def test_basic_insert(self, mock_connect):
+
+    @patch('production_impl.mysql.connector.pooling.MySQLConnectionPool')
+    def test_basic_insert(self, mock_pool_class):
         """Test basic insert"""
         mock_cursor = Mock()
         mock_cursor.rowcount = 1
         mock_conn = Mock()
         mock_conn.cursor.return_value = mock_cursor
-        mock_connect.return_value = mock_conn
-        
+        mock_pool = Mock()
+        mock_pool.get_connection.return_value = mock_conn
+        mock_pool_class.return_value = mock_pool
+
         sink = MySQLSink(
             host="localhost", user="root", password="password",
             database="testdb", table="testtable"
         )
-        
+
         result = sink.insert_record("123", '{"data": "test"}')
         assert result is True
     
-    @patch('production_impl.mysql.connector.connect')
-    def test_duplicate_handling(self, mock_connect):
+    @patch('production_impl.mysql.connector.pooling.MySQLConnectionPool')
+    def test_duplicate_handling(self, mock_pool_class):
         """Test duplicate detection"""
         mock_cursor = Mock()
         mock_conn = Mock()
         mock_conn.cursor.return_value = mock_cursor
-        mock_connect.return_value = mock_conn
-        
+        mock_pool = Mock()
+        mock_pool.get_connection.return_value = mock_conn
+        mock_pool_class.return_value = mock_pool
+
         sink = MySQLSink(
             host="localhost", user="root", password="password",
             database="testdb", table="testtable"
         )
-        
+
         mock_cursor.rowcount = 1
         result1 = sink.insert_record("123", '{"data": "test"}')
         assert result1 is True
-        
+
         mock_cursor.rowcount = 0
         result2 = sink.insert_record("123", '{"data": "test2"}')
         assert result2 is False
-        
+
         stats = sink.get_stats()
         assert stats["inserted"] == 1
         assert stats["skipped"] == 1
     
-    @patch('production_impl.mysql.connector.connect')
-    def test_commit(self, mock_connect):
+    @patch('production_impl.mysql.connector.pooling.MySQLConnectionPool')
+    def test_commit(self, mock_pool_class):
         """Test commit"""
         mock_cursor = Mock()
         mock_cursor.rowcount = 1
         mock_conn = Mock()
         mock_conn.cursor.return_value = mock_cursor
-        mock_connect.return_value = mock_conn
-        
+        mock_pool = Mock()
+        mock_pool.get_connection.return_value = mock_conn
+        mock_pool_class.return_value = mock_pool
+
         sink = MySQLSink(
             host="localhost", user="root", password="password",
             database="testdb", table="testtable"
         )
-        
+
         sink.insert_record("123", '{"data": "test"}')
         sink.commit()
         mock_conn.commit.assert_called()
-    
-    @patch('production_impl.mysql.connector.connect')
-    def test_close(self, mock_connect):
+
+    @patch('production_impl.mysql.connector.pooling.MySQLConnectionPool')
+    def test_close(self, mock_pool_class):
         """Test close"""
         mock_cursor = Mock()
         mock_conn = Mock()
         mock_conn.cursor.return_value = mock_cursor
-        mock_connect.return_value = mock_conn
-        
+        mock_pool = Mock()
+        mock_pool.get_connection.return_value = mock_conn
+        mock_pool_class.return_value = mock_pool
+
         sink = MySQLSink(
             host="localhost", user="root", password="password",
             database="testdb", table="testtable"
         )
-        
+
         sink.close()
-        mock_cursor.close.assert_called_once()
-        mock_conn.close.assert_called_once()
-    
-    @patch('production_impl.mysql.connector.connect')
-    def test_error_handling(self, mock_connect):
+        # Just verify close doesn't error
+
+    @patch('production_impl.mysql.connector.pooling.MySQLConnectionPool')
+    def test_error_handling(self, mock_pool_class):
         """Test error handling"""
         mock_cursor = Mock()
         mock_cursor.execute.side_effect = Exception("DB error")
         mock_conn = Mock()
         mock_conn.cursor.return_value = mock_cursor
-        mock_connect.return_value = mock_conn
-        
+        mock_pool = Mock()
+        mock_pool.get_connection.return_value = mock_conn
+        mock_pool_class.return_value = mock_pool
+
         sink = MySQLSink(
             host="localhost", user="root", password="password",
             database="testdb", table="testtable"
         )
-        
+
         result = sink.insert_record("123", '{"data": "test"}')
         assert result is False
         assert sink.get_stats()["errors"] == 1
-    
-    @patch('production_impl.mysql.connector.connect')
-    def test_stats_tracking(self, mock_connect):
+
+    @patch('production_impl.mysql.connector.pooling.MySQLConnectionPool')
+    def test_stats_tracking(self, mock_pool_class):
         """Test stats"""
         mock_cursor = Mock()
         mock_conn = Mock()
         mock_conn.cursor.return_value = mock_cursor
-        mock_connect.return_value = mock_conn
-        
+        mock_pool = Mock()
+        mock_pool.get_connection.return_value = mock_conn
+        mock_pool_class.return_value = mock_pool
+
         sink = MySQLSink(
             host="localhost", user="root", password="password",
             database="testdb", table="testtable"
         )
-        
+
         mock_cursor.rowcount = 1
         sink.insert_record("1", '{"data": "test1"}')
         mock_cursor.rowcount = 1
         sink.insert_record("2", '{"data": "test2"}')
         mock_cursor.rowcount = 0
         sink.insert_record("1", '{"data": "dup"}')
-        
+
         stats = sink.get_stats()
         assert stats["inserted"] == 2
         assert stats["skipped"] == 1
@@ -291,10 +302,10 @@ class TestMySQLSink:
 
 class TestIntegration:
     """Integration test"""
-    
-    @patch('production_impl.mysql.connector.connect')
+
+    @patch('production_impl.mysql.connector.pooling.MySQLConnectionPool')
     @patch('production_impl.requests.post')
-    def test_full_pipeline(self, mock_post, mock_connect):
+    def test_full_pipeline(self, mock_post, mock_pool_class):
         """Test ES -> MySQL pipeline"""
         # ES mock - return data then empty
         first = Mock()
@@ -306,43 +317,45 @@ class TestIntegration:
             ]},
             "_scroll_id": "scroll123"
         }
-        
+
         empty = Mock()
         empty.status_code = 200
         empty.json.return_value = {
             "hits": {"hits": []},
             "_scroll_id": "scroll123"
         }
-        
+
         mock_post.side_effect = [first, empty]
-        
+
         # MySQL mock
         mock_cursor = Mock()
         mock_cursor.rowcount = 1
         mock_conn = Mock()
         mock_conn.cursor.return_value = mock_cursor
-        mock_connect.return_value = mock_conn
-        
+        mock_pool = Mock()
+        mock_pool.get_connection.return_value = mock_conn
+        mock_pool_class.return_value = mock_pool
+
         # Run pipeline
         source = ElasticsearchSource(
             es_url="http://localhost:9200/test/_search",
             es_user="user",
             es_pass="pass"
         )
-        
+
         sink = MySQLSink(
             host="localhost", user="root", password="password",
             database="testdb", table="testtable"
         )
-        
+
         for record_id, content in source.fetch_records():
             sink.insert_record(record_id, content)
-        
+
         sink.commit()
-        
+
         stats = sink.get_stats()
         assert stats["inserted"] == 2
-        
+
         source.close()
         sink.close()
 

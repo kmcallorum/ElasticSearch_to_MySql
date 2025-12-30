@@ -226,13 +226,15 @@ class TestElasticsearchSourceEdgeCases:
 class TestMySQLSinkEdgeCases:
     """Test edge cases in MySQLSink"""
     
-    @patch('production_impl.mysql.connector.connect')
-    def test_error_handling_detailed(self, mock_connect):
+    @patch('production_impl.mysql.connector.pooling.MySQLConnectionPool')
+    def test_error_handling_detailed(self, mock_pool_class):
         """Test detailed error handling in insert"""
         mock_cursor = Mock()
         mock_conn = Mock()
         mock_conn.cursor.return_value = mock_cursor
-        mock_connect.return_value = mock_conn
+        mock_pool = Mock()
+        mock_pool.get_connection.return_value = mock_conn
+        mock_pool_class.return_value = mock_pool
         
         sink = MySQLSink(
             host="localhost",
@@ -264,14 +266,16 @@ class TestMySQLSinkEdgeCases:
         assert stats["inserted"] == 2
         assert stats["errors"] == 1
     
-    @patch('production_impl.mysql.connector.connect')
-    def test_commit_logging(self, mock_connect):
+    @patch('production_impl.mysql.connector.pooling.MySQLConnectionPool')
+    def test_commit_logging(self, mock_pool_class):
         """Test that commit logs stats"""
         mock_cursor = Mock()
         mock_cursor.rowcount = 1
         mock_conn = Mock()
         mock_conn.cursor.return_value = mock_cursor
-        mock_connect.return_value = mock_conn
+        mock_pool = Mock()
+        mock_pool.get_connection.return_value = mock_conn
+        mock_pool_class.return_value = mock_pool
         
         sink = MySQLSink(
             host="localhost",
@@ -289,14 +293,16 @@ class TestMySQLSinkEdgeCases:
         
         assert mock_conn.commit.call_count == 2
     
-    @patch('production_impl.mysql.connector.connect')
-    def test_stats_copy_independence(self, mock_connect):
+    @patch('production_impl.mysql.connector.pooling.MySQLConnectionPool')
+    def test_stats_copy_independence(self, mock_pool_class):
         """Test that get_stats returns independent copy"""
         mock_cursor = Mock()
         mock_cursor.rowcount = 1
         mock_conn = Mock()
         mock_conn.cursor.return_value = mock_cursor
-        mock_connect.return_value = mock_conn
+        mock_pool = Mock()
+        mock_pool.get_connection.return_value = mock_conn
+        mock_pool_class.return_value = mock_pool
         
         sink = MySQLSink(
             host="localhost",
@@ -321,9 +327,9 @@ class TestMySQLSinkEdgeCases:
 class TestProductionImplIntegration:
     """Integration tests for production implementations"""
     
-    @patch('production_impl.mysql.connector.connect')
+    @patch('production_impl.mysql.connector.pooling.MySQLConnectionPool')
     @patch('production_impl.requests.post')
-    def test_full_es_to_mysql_flow(self, mock_post, mock_connect):
+    def test_full_es_to_mysql_flow(self, mock_post, mock_pool_class):
         """Test complete ES -> MySQL flow with all edge cases"""
         # Setup ES mock with multiple batches
         batch1 = Mock()
@@ -335,7 +341,7 @@ class TestProductionImplIntegration:
             ]},
             "_scroll_id": "scroll1"
         }
-        
+
         batch2 = Mock()
         batch2.status_code = 200
         batch2.json.return_value = {
@@ -344,21 +350,23 @@ class TestProductionImplIntegration:
             ]},
             "_scroll_id": "scroll2"
         }
-        
+
         empty = Mock()
         empty.status_code = 200
         empty.json.return_value = {
             "hits": {"hits": []},
             "_scroll_id": "scroll3"
         }
-        
+
         mock_post.side_effect = [batch1, batch2, empty]
-        
+
         # Setup MySQL mock with some errors
         mock_cursor = Mock()
         mock_conn = Mock()
         mock_conn.cursor.return_value = mock_cursor
-        mock_connect.return_value = mock_conn
+        mock_pool = Mock()
+        mock_pool.get_connection.return_value = mock_conn
+        mock_pool_class.return_value = mock_pool
         
         # First two inserts succeed, third fails
         mock_cursor.execute.side_effect = [

@@ -9,20 +9,21 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    
+
     services:
       mysql:
         image: mysql:8.0
         env:
           MYSQL_ROOT_PASSWORD: testpassword
           MYSQL_DATABASE: testdb
+          MYSQL_ROOT_HOST: '%'
         ports:
           - 3306:3306
         options: >-
-          --health-cmd="mysqladmin ping -h localhost"
+          --health-cmd="mysqladmin ping -h localhost -u root -ptestpassword"
           --health-interval=10s
           --health-timeout=5s
-          --health-retries=5
+          --health-retries=10
 
     steps:
     - name: Checkout code
@@ -60,15 +61,13 @@ jobs:
           sleep 2
         done
 
-    - name: Grant MySQL permissions for Docker network
+    - name: Verify MySQL connection and permissions
       run: |
-        echo "Granting permissions for root user from any host..."
-        mysql -h 127.0.0.1 -P 3306 -uroot -ptestpassword -e "
-          CREATE USER IF NOT EXISTS 'root'@'%' IDENTIFIED BY 'testpassword';
-          GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' WITH GRANT OPTION;
-          FLUSH PRIVILEGES;
-          SELECT user, host FROM mysql.user WHERE user='root';
-        "
+        echo "Verifying MySQL connection..."
+        mysql -h 127.0.0.1 -P 3306 -uroot -ptestpassword -e "SELECT 'MySQL connection successful!' as status;"
+
+        echo "Checking current root user permissions..."
+        mysql -h 127.0.0.1 -P 3306 -uroot -ptestpassword -e "SELECT user, host FROM mysql.user WHERE user='root';"
 
     - name: Setup MySQL test database and table
       run: |
@@ -78,7 +77,7 @@ jobs:
             content JSON NOT NULL,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
           );
-          
+
           SHOW TABLES;
           DESCRIBE records;
         EOF

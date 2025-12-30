@@ -2,3 +2,4 @@ __pycache__/*
 .coverage
 pipeline.log
 *.jsonl
+daily_run_ai_error_test.log

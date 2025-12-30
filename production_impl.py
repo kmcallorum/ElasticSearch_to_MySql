@@ -13,6 +13,7 @@ from typing import Iterator, Tuple, Dict, Any, Optional
 from data_interfaces import DataSource, DataSink
 import threading
 import mysql.connector.pooling
+from datetime import datetime
 
 logger = logging.getLogger(__name__)
 
@@ -42,37 +43,55 @@ class ElasticsearchSource(DataSource):
     def fetch_records(self, query_params: Optional[Dict[str, Any]] = None) -> Iterator[Tuple[str, str]]:
         """Fetch records from Elasticsearch using scroll API"""
         query = self._build_query(query_params)
-        
+
+        # Create log file with current date
+        date_str = datetime.now().strftime("%Y-%m-%d")
+        log_filename = f"elasticSearchData-{date_str}.txt"
+
         # Initial scroll request
         params = {"scroll": "10m", "size": self.batch_size}
         logger.info(f"Starting Elasticsearch scroll from {self.es_url}")
-        
+        logger.info(f"Raw ElasticSearch data will be logged to: {log_filename}")
+
         response = requests.post(
-            self.es_url, 
-            auth=self.auth, 
-            headers=self.headers, 
-            params=params, 
+            self.es_url,
+            auth=self.auth,
+            headers=self.headers,
+            params=params,
             data=json.dumps(query)
         )
-        
+
         if response.status_code != 200:
             raise Exception(f"Initial scroll failed: {response.status_code}, {response.text}")
-        
+
         data = response.json()
+
+        # Write initial response to log file
+        with open(log_filename, 'w') as log_file:
+            log_file.write("=== ELASTICSEARCH DATA DUMP ===\n")
+            log_file.write(f"Timestamp: {datetime.now().isoformat()}\n")
+            log_file.write(f"URL: {self.es_url}\n")
+            log_file.write(f"Query: {json.dumps(query, indent=2)}\n")
+            log_file.write("=" * 50 + "\n\n")
+            log_file.write("=== INITIAL SCROLL RESPONSE ===\n")
+            log_file.write(json.dumps(data, indent=2))
+            log_file.write("\n\n")
+
         scroll_id = data.get("_scroll_id")
         hits = data.get("hits", {}).get("hits", [])
         total_fetched = 0
         
         # Process hits
+        batch_num = 1
         while hits:
             for hit in hits:
                 record_id = hit["_id"]
                 content = json.dumps(hit)
                 yield (record_id, content)
-            
+
             total_fetched += len(hits)
             logger.info(f"Fetched {len(hits)} records. Total so far: {total_fetched}")
-            
+
             # Get next batch
             base_url = self.es_url.split('/_search')[0].rsplit('/', 1)[0]
             response = requests.post(
@@ -81,16 +100,32 @@ class ElasticsearchSource(DataSource):
                 headers=self.headers,
                 data=json.dumps({"scroll": "10m", "scroll_id": scroll_id})
             )
-            
+
             if response.status_code != 200:
                 logger.error(f"Scroll request failed: {response.status_code}, {response.text}")
                 break
-            
+
             data = response.json()
+
+            # Append scroll response to log file
+            if data.get("hits", {}).get("hits", []):
+                with open(log_filename, 'a') as log_file:
+                    log_file.write(f"=== SCROLL BATCH {batch_num} ===\n")
+                    log_file.write(json.dumps(data, indent=2))
+                    log_file.write("\n\n")
+                batch_num += 1
+
             scroll_id = data.get("_scroll_id")
             hits = data.get("hits", {}).get("hits", [])
-        
+
+        # Write completion message
+        with open(log_filename, 'a') as log_file:
+            log_file.write("=== FETCH COMPLETED ===\n")
+            log_file.write(f"Total records fetched: {total_fetched}\n")
+            log_file.write(f"Completion time: {datetime.now().isoformat()}\n")
+
         logger.info(f"Elasticsearch fetch completed. Total records: {total_fetched}")
+        logger.info(f"Complete raw data saved to: {log_filename}")
     
     def _build_query(self, query_params: Optional[Dict[str, Any]]) -> Dict[str, Any]:
         """Build Elasticsearch query from parameters"""

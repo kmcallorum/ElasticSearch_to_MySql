@@ -16,11 +16,10 @@ jobs:
         env:
           MYSQL_ROOT_PASSWORD: testpassword
           MYSQL_DATABASE: testdb
-          MYSQL_ROOT_HOST: '%'
         ports:
           - 3306:3306
         options: >-
-          --health-cmd="mysqladmin ping -h localhost -u root -ptestpassword"
+          --health-cmd="mysqladmin ping -h localhost"
           --health-interval=10s
           --health-timeout=5s
           --health-retries=10
@@ -61,13 +60,19 @@ jobs:
           sleep 2
         done
 
-    - name: Verify MySQL connection and permissions
+    - name: Configure MySQL permissions for Docker network
       run: |
-        echo "Verifying MySQL connection..."
-        mysql -h 127.0.0.1 -P 3306 -uroot -ptestpassword -e "SELECT 'MySQL connection successful!' as status;"
+        echo "Configuring MySQL to accept connections from Docker network..."
+        mysql -h 127.0.0.1 -P 3306 -uroot -ptestpassword <<'EOF'
+          -- Create root@'%' if it doesn't exist, then ensure password is set
+          CREATE USER IF NOT EXISTS 'root'@'%';
+          ALTER USER 'root'@'%' IDENTIFIED BY 'testpassword';
+          GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' WITH GRANT OPTION;
+          FLUSH PRIVILEGES;
 
-        echo "Checking current root user permissions..."
-        mysql -h 127.0.0.1 -P 3306 -uroot -ptestpassword -e "SELECT user, host FROM mysql.user WHERE user='root';"
+          -- Show configured users
+          SELECT user, host FROM mysql.user WHERE user='root';
+        EOF
 
     - name: Setup MySQL test database and table
       run: |
@@ -81,6 +86,11 @@ jobs:
           SHOW TABLES;
           DESCRIBE records;
         EOF
+
+    - name: Verify MySQL connection from test perspective
+      run: |
+        echo "Testing MySQL connection with the credentials tests will use..."
+        mysql -h 127.0.0.1 -P 3306 -uroot -ptestpassword -e "SELECT 'Connection successful!' as status;"
 
     - name: Run tests with pytest
       env:

@@ -44,7 +44,7 @@ class ElasticsearchSource(DataSource):
         query = self._build_query(query_params)
         
         # Initial scroll request
-        params = {"scroll": "2m", "size": self.batch_size}
+        params = {"scroll": "10m", "size": self.batch_size}
         logger.info(f"Starting Elasticsearch scroll from {self.es_url}")
         
         response = requests.post(
@@ -79,7 +79,7 @@ class ElasticsearchSource(DataSource):
                 f"{base_url}/_search/scroll",
                 auth=self.auth,
                 headers=self.headers,
-                data=json.dumps({"scroll": "2m", "scroll_id": scroll_id})
+                data=json.dumps({"scroll": "10m", "scroll_id": scroll_id})
             )
             
             if response.status_code != 200:

@@ -23,6 +23,9 @@ jobs:
           --health-interval=10s
           --health-timeout=5s
           --health-retries=10
+          --default-authentication-plugin=mysql_native_password
+          --bind-address=0.0.0.0
+          --skip-name-resolve
 
     steps:
     - name: Checkout code
@@ -60,33 +63,30 @@ jobs:
           sleep 2
         done
 
-    - name: Configure MySQL for network access (aggressive fix)
+    - name: Configure MySQL for Docker network access
       run: |
-        echo "Configuring MySQL to accept connections from Docker network..."
+        echo "=== Configuring MySQL permissions ==="
 
-        # Show current users
-        echo "Current MySQL users:"
-        mysql -h 127.0.0.1 -P 3306 -uroot -ptestpassword -e "SELECT user, host FROM mysql.user WHERE user='root';"
+        # Show current state
+        echo "Current root users:"
+        mysql -h 127.0.0.1 -P 3306 -uroot -ptestpassword -e "SELECT user, host, plugin FROM mysql.user WHERE user='root';"
 
-        # Drop root@'%' if it exists, then create it fresh
+        # Configure root@'%' for network access
         mysql -h 127.0.0.1 -P 3306 -uroot -ptestpassword <<'EOF'
-          -- Drop if exists to start fresh
+          -- First, ensure mysql_native_password plugin is used (should be default now)
+          -- Drop and recreate root@'%' to ensure clean state
           DROP USER IF EXISTS 'root'@'%';
-
-          -- Create new root@'%' with mysql_native_password for compatibility
           CREATE USER 'root'@'%' IDENTIFIED WITH mysql_native_password BY 'testpassword';
 
           -- Grant all privileges
           GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' WITH GRANT OPTION;
-
-          -- Apply changes
           FLUSH PRIVILEGES;
 
-          -- Verify
+          -- Show final state
           SELECT user, host, plugin FROM mysql.user WHERE user='root';
         EOF
 
-        echo "MySQL configuration complete!"
+        echo "=== MySQL configuration complete ==="
 
     - name: Setup MySQL test database and table
       run: |
@@ -100,11 +100,6 @@ jobs:
           SHOW TABLES;
           DESCRIBE records;
         EOF
-
-    - name: Verify MySQL connection from test perspective
-      run: |
-        echo "Testing MySQL connection with the credentials tests will use..."
-        mysql -h 127.0.0.1 -P 3306 -uroot -ptestpassword -e "SELECT 'Connection successful!' as status;"
 
     - name: Run tests with pytest
       env:

@@ -268,7 +268,7 @@ class TestMySQLSinkEdgeCases:
     
     @patch('production_impl.mysql.connector.pooling.MySQLConnectionPool')
     def test_commit_logging(self, mock_pool_class):
-        """Test that commit logs stats"""
+        """Test that commit logs stats (commit is a no-op, commits happen per-record)"""
         mock_cursor = Mock()
         mock_cursor.rowcount = 1
         mock_conn = Mock()
@@ -276,7 +276,7 @@ class TestMySQLSinkEdgeCases:
         mock_pool = Mock()
         mock_pool.get_connection.return_value = mock_conn
         mock_pool_class.return_value = mock_pool
-        
+
         sink = MySQLSink(
             host="localhost",
             user="root",
@@ -284,14 +284,17 @@ class TestMySQLSinkEdgeCases:
             database="testdb",
             table="testtable"
         )
-        
+
+        # Insert calls commit once per record
         sink.insert_record("1", '{"data": "test"}')
-        
-        # Commit should be callable multiple times
+        assert mock_conn.commit.call_count == 1
+
+        # sink.commit() is a no-op that just logs, doesn't call conn.commit()
         sink.commit()
         sink.commit()
-        
-        assert mock_conn.commit.call_count == 2
+
+        # Commit count should still be 1 (from insert_record)
+        assert mock_conn.commit.call_count == 1
     
     @patch('production_impl.mysql.connector.pooling.MySQLConnectionPool')
     def test_stats_copy_independence(self, mock_pool_class):

@@ -1,5 +1,4 @@
 name: Python Tests
-
 on:
   push:
     branches: [ main, master, develop ]
@@ -9,7 +8,6 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-
     services:
       mysql:
         image: mysql:5.7
@@ -63,21 +61,14 @@ jobs:
     - name: Configure MySQL for Docker network access
       run: |
         echo "=== Configuring MySQL permissions ==="
-
-        # Show current state
         echo "Current root users:"
         mysql -h 127.0.0.1 -P 3306 -uroot -ptestpassword -e "SELECT user, host, plugin FROM mysql.user WHERE user='root';"
-
-        # Configure root@'%' for network access (MySQL 5.7 uses mysql_native_password by default)
+        
         mysql -h 127.0.0.1 -P 3306 -uroot -ptestpassword <<'EOF'
-          -- Create root@'%' for network access
           GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'testpassword' WITH GRANT OPTION;
           FLUSH PRIVILEGES;
-
-          -- Show final state
           SELECT user, host, plugin FROM mysql.user WHERE user='root';
         EOF
-
         echo "=== MySQL configuration complete ==="
 
     - name: Setup MySQL test database and table
@@ -88,12 +79,11 @@ jobs:
             content JSON NOT NULL,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
           );
-
           SHOW TABLES;
           DESCRIBE records;
         EOF
 
-    - name: Run tests with pytest
+    - name: Run tests with coverage
       env:
         MYSQL_HOST: 127.0.0.1
         MYSQL_PORT: 3306
@@ -101,21 +91,21 @@ jobs:
         MYSQL_PASSWORD: testpassword
         MYSQL_DATABASE: testdb
       run: |
-        pytest -v --tb=short --cov=. --cov-report=term-missing
-        pytest --cov --junitxml=junit.xml -o junit_family=legacy
+        pytest -v --tb=short \
+          --cov=. \
+          --cov-report=xml \
+          --cov-report=term-missing \
+          --junitxml=junit.xml
+
     - name: Display coverage report
       run: |
         echo "Coverage Summary:"
         coverage report --skip-covered
 
-    - name: Generate coverage badge data
-      if: success()
-      run: |
-        COVERAGE=$(coverage report | grep TOTAL | awk '{print $4}' | sed 's/%//')
-        echo "Total coverage: ${COVERAGE}%"
-        echo "COVERAGE=${COVERAGE}" >> $GITHUB_ENV
-    - name: Upload coverage reports to Codecov
+    - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v5
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
-        slug: kmcallorum/ElasticSearch_to_MySql
+        files: ./coverage.xml
+        fail_ci_if_error: false
+        verbose: true

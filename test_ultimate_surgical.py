@@ -13,8 +13,7 @@ import tempfile
 import csv
 import os
 import time
-import sys
-from unittest.mock import Mock, patch, MagicMock
+from unittest.mock import patch
 import importlib
 
 

@@ -152,7 +152,6 @@ class ElasticsearchSource(DataSource):
     
     def close(self):
         """No cleanup needed for ES source"""
-        pass
 
 
 

@@ -14,7 +14,7 @@ License: MIT
 from prometheus_client import Counter, Gauge, Histogram, Summary, Info
 import time
 from contextlib import contextmanager
-from typing import Optional, Dict, Any
+from typing import Dict, Any
 import logging
 
 logger = logging.getLogger(__name__)

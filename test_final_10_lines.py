@@ -11,8 +11,7 @@ Author: Kevin McAllorum
 import pytest
 import tempfile
 import os
-import json
-from unittest.mock import Mock, patch, mock_open
+from unittest.mock import patch
 from test_impl import FileSink, JSONLSink
 
 

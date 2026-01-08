@@ -12,7 +12,6 @@ import tempfile
 import csv
 from pipeline import DataPipeline
 from test_impl import CSVSource, FileSink, JSONLSink
-from data_interfaces import DataSource, DataSink
 
 
 # Test fixtures

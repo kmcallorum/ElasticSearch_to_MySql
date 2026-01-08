@@ -9,11 +9,9 @@ import pytest
 import tempfile
 import csv
 import os
-import sys
 import signal
 import time
-from unittest.mock import Mock, patch, MagicMock
-from io import StringIO
+from unittest.mock import Mock, patch
 
 
 class TestMetricsServerErrorPaths:

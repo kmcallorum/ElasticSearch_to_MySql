@@ -8,7 +8,7 @@ License: MIT
 import pytest
 import os
 from error_analyzer import (
-    ErrorAnalyzer, NoOpErrorAnalyzer, SimpleErrorAnalyzer, ClaudeErrorAnalyzer
+    NoOpErrorAnalyzer, SimpleErrorAnalyzer, ClaudeErrorAnalyzer
 )
 
 

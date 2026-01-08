@@ -9,10 +9,8 @@ GitHub: github.com/kmcallorum
 License: MIT
 """
 import pytest
-import time
 import tempfile
 import csv
-from unittest.mock import Mock, patch
 from pipeline import DataPipeline
 from test_impl import CSVSource, FileSink, JSONLSink
 from error_analyzer import SimpleErrorAnalyzer, NoOpErrorAnalyzer

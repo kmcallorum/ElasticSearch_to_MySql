@@ -8,11 +8,9 @@ GitHub: github.com/kmcallorum
 License: MIT
 """
 import pytest
-import sys
 import tempfile
 import csv
-from unittest.mock import Mock, patch, MagicMock
-from io import StringIO
+from unittest.mock import Mock, patch
 
 # Import the CLI functions we want to test
 from pipeline_cli import create_source, create_sink, create_error_analyzer, build_query_params

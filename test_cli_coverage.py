@@ -6,7 +6,7 @@ Tests edge cases and error paths in pipeline_cli.py
 Author: Kevin McAllorum
 """
 import pytest
-from unittest.mock import Mock, patch, MagicMock
+from unittest.mock import Mock, patch
 import signal
 
 

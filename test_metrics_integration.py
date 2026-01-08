@@ -10,9 +10,7 @@ import tempfile
 import csv
 import os
 import time
-from unittest.mock import Mock, patch, MagicMock
-from io import StringIO
-import sys
+from unittest.mock import Mock, patch
 
 
 class TestPipelineWithMetrics:
@@ -351,8 +349,7 @@ class TestMetricsServerEdgeCases:
     
     def test_metrics_handler_logging(self):
         """Test MetricsHandler log_message method"""
-        from metrics_server import MetricsHandler, MetricsServer
-        from http.server import HTTPServer
+        from metrics_server import MetricsServer
         
         # Create a mock server
         with MetricsServer(port=9501) as server:

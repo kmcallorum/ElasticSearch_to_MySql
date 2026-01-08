@@ -12,10 +12,10 @@ import pytest
 import tempfile
 import csv
 import os
-from unittest.mock import Mock, patch, MagicMock
+from unittest.mock import Mock
 from pipeline import DataPipeline
 from test_impl import CSVSource, FileSink
-from error_analyzer import SimpleErrorAnalyzer, NoOpErrorAnalyzer
+from error_analyzer import SimpleErrorAnalyzer
 
 
 class TestPipelineErrorHandling:

@@ -8,7 +8,6 @@ import pytest
 import os
 import csv
 import json
-import tempfile
 from pipeline import DataPipeline
 from test_impl import CSVSource, FileSink
 

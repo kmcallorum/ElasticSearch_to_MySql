@@ -8,7 +8,7 @@ Author: Kevin McAllorum (kevin_mcallorum@linux.com)
 import pytest
 import time
 import json
-from unittest.mock import Mock, patch
+from unittest.mock import patch
 import urllib.request
 from metrics_server import MetricsServer, start_metrics_server
 

@@ -7,7 +7,7 @@ Author: Kevin McAllorum
 """
 import pytest
 import time
-from unittest.mock import patch, Mock, MagicMock
+from unittest.mock import patch, MagicMock
 from metrics_server import MetricsServer
 
 

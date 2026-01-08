@@ -7,7 +7,7 @@ import pytest
 import os
 import tempfile
 import json
-from unittest.mock import Mock, patch, MagicMock
+from unittest.mock import Mock, patch
 from error_analyzer import ClaudeErrorAnalyzer
 
 

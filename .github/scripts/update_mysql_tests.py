@@ -4,7 +4,6 @@ Script to update MySQL test files to use environment-based configuration.
 Adds the import and provides a helper to replace hardcoded MySQL parameters.
 """
 import re
-import sys
 from pathlib import Path
 
 

@@ -158,9 +158,9 @@ class DataPipeline:
                             metrics.insert_duration_seconds,
                             sink_type=self.sink_type
                         ):
-                            result = self.sink.insert_record(record_id, content)
+                            self.sink.insert_record(record_id, content)
                     else:
-                        result = self.sink.insert_record(record_id, content)
+                        self.sink.insert_record(record_id, content)
                     
                     self.total_processed += 1
                     

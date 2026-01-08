@@ -7,7 +7,6 @@ import pytest
 import os
 import csv
 import json
-import tempfile
 import subprocess
 import sys
 from pathlib import Path

@@ -394,7 +394,7 @@ class TestJSONLSourceEdgeCases:
             try:
                 os.chmod(temp_file, stat.S_IRUSR | stat.S_IWUSR)
                 os.unlink(temp_file)
-            except:  # pragma: no cover
+            except OSError:  # pragma: no cover
                 pass  # pragma: no cover
 
 class TestJSONLSourceIntegration:

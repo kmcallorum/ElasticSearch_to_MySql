@@ -342,7 +342,6 @@ if __name__ == "__main__":
     """
     Example showing how to use custom implementations
     """
-    from pipeline import DataPipeline
     
     # Example: PostgreSQL → S3
     # source = PostgreSQLSource(

@@ -7,7 +7,6 @@ how the AI error analyzer provides helpful troubleshooting suggestions.
 
 Author: Kevin McAllorum (kevin_mcallorum@linux.com)
 """
-import sys
 import logging
 from error_analyzer import ClaudeErrorAnalyzer, SimpleErrorAnalyzer
 

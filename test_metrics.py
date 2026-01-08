@@ -7,7 +7,6 @@ Author: Kevin McAllorum (kevin_mcallorum@linux.com)
 """
 import pytest
 import time
-from unittest.mock import Mock, patch
 import metrics
 
 

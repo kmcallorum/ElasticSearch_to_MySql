@@ -5,7 +5,7 @@ Author: Mac McAllorum
 """
 import pytest
 import os
-from unittest.mock import Mock, patch, MagicMock
+from unittest.mock import Mock, patch
 from error_analyzer import (
     ClaudeErrorAnalyzer,
     SimpleErrorAnalyzer
@@ -216,16 +216,17 @@ class TestSimpleErrorAnalyzerAllMethods:
     def test_json_decode_help(self):
         """Test _json_decode_help method"""
         analyzer = SimpleErrorAnalyzer()
-        
+
         # Create a JSONDecodeError
         import json
+        error = None
         try:
             json.loads("invalid json")
         except json.JSONDecodeError as e:
             error = e
-        else:
-            pytest.fail("Expected JSONDecodeError was not raised")
-        
+
+        assert error is not None, "Expected JSONDecodeError was not raised"
+
         context = {"operation": "parse_json"}
         result = analyzer.analyze_error(error, context)
         

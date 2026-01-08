@@ -21,7 +21,7 @@ class TestFileSinkExceptionHandler:
     
     def test_file_sink_write_exception(self):
         """Trigger exception handler when file.write() fails"""
-        output_path = tempfile.mktemp(suffix='.jsonl')
+        output_path = tempfile.NamedTemporaryFile(suffix='.jsonl', delete=False).name
         
         try:
             sink = FileSink(output_path)
@@ -45,7 +45,7 @@ class TestFileSinkExceptionHandler:
     
     def test_file_sink_write_fails_with_bad_data(self):
         """Test FileSink when json.dumps fails"""
-        output_path = tempfile.mktemp(suffix='.jsonl')
+        output_path = tempfile.NamedTemporaryFile(suffix='.jsonl', delete=False).name
         
         try:
             sink = FileSink(output_path)
@@ -71,7 +71,7 @@ class TestJSONLSinkDuplicatesAndExceptions:
     
     def test_jsonl_sink_duplicate_ids(self):
         """Test duplicate ID handling in JSONLSink (lines 165-167)"""
-        output_path = tempfile.mktemp(suffix='.jsonl')
+        output_path = tempfile.NamedTemporaryFile(suffix='.jsonl', delete=False).name
         
         try:
             sink = JSONLSink(output_path)
@@ -98,7 +98,7 @@ class TestJSONLSinkDuplicatesAndExceptions:
     
     def test_jsonl_sink_write_exception(self):
         """Trigger exception handler when file.write() fails"""
-        output_path = tempfile.mktemp(suffix='.jsonl')
+        output_path = tempfile.NamedTemporaryFile(suffix='.jsonl', delete=False).name
         
         try:
             sink = JSONLSink(output_path)
@@ -122,7 +122,7 @@ class TestJSONLSinkDuplicatesAndExceptions:
     
     def test_jsonl_sink_json_dumps_fails(self):
         """Test JSONLSink when json.dumps fails"""
-        output_path = tempfile.mktemp(suffix='.jsonl')
+        output_path = tempfile.NamedTemporaryFile(suffix='.jsonl', delete=False).name
         
         try:
             sink = JSONLSink(output_path)

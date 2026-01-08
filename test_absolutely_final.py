@@ -118,7 +118,7 @@ class TestTestImplExceptionBranches:
         import tempfile
         import os
         
-        output_path = tempfile.mktemp(suffix='.jsonl')
+        output_path = tempfile.NamedTemporaryFile(suffix='.jsonl', delete=False).name
         
         try:
             sink = FileSink(output_path)
@@ -136,7 +136,7 @@ class TestTestImplExceptionBranches:
         import tempfile
         import os
         
-        output_path = tempfile.mktemp(suffix='.jsonl')
+        output_path = tempfile.NamedTemporaryFile(suffix='.jsonl', delete=False).name
         
         try:
             sink = JSONLSink(output_path)

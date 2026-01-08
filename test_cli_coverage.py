@@ -252,7 +252,7 @@ class TestPipelineMetricsUnavailable:
             writer.writerow({"id": "1", "data": "test"})
             csv_path = f.name
         
-        output_path = tempfile.mktemp(suffix='.txt')
+        output_path = tempfile.NamedTemporaryFile(suffix='.txt', delete=False).name
         
         try:
             # Temporarily hide metrics module

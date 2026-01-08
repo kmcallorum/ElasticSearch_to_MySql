@@ -104,7 +104,7 @@ class TestTestImplExceptionPaths:
         """Trigger the except clause in FileSink._is_json"""
         from test_impl import FileSink
         
-        output_path = tempfile.mktemp(suffix='.jsonl')
+        output_path = tempfile.NamedTemporaryFile(suffix='.jsonl', delete=False).name
         
         try:
             sink = FileSink(output_path)
@@ -133,7 +133,7 @@ class TestTestImplExceptionPaths:
         """Test JSONLSink exception handling in _is_json equivalent"""
         from test_impl import JSONLSink
         
-        output_path = tempfile.mktemp(suffix='.jsonl')
+        output_path = tempfile.NamedTemporaryFile(suffix='.jsonl', delete=False).name
         
         try:
             sink = JSONLSink(output_path)
@@ -210,7 +210,7 @@ class TestRemainingEdgeCases:
         """Test FileSink with duplicates and logging at intervals"""
         from test_impl import FileSink
         
-        output_path = tempfile.mktemp(suffix='.jsonl')
+        output_path = tempfile.NamedTemporaryFile(suffix='.jsonl', delete=False).name
         
         try:
             sink = FileSink(output_path)

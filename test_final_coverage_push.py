@@ -170,7 +170,7 @@ class TestTestImplEdgeCases:
     
     def test_file_sink_with_non_json_content_string(self):
         """Test FileSink with plain text content"""
-        output_path = tempfile.mktemp(suffix='.jsonl')
+        output_path = tempfile.NamedTemporaryFile(suffix='.jsonl', delete=False).name
         
         try:
             sink = FileSink(output_path)
@@ -197,7 +197,7 @@ class TestTestImplEdgeCases:
     
     def test_jsonl_sink_with_non_json_content(self):
         """Test JSONLSink with non-JSON content"""
-        output_path = tempfile.mktemp(suffix='.jsonl')
+        output_path = tempfile.NamedTemporaryFile(suffix='.jsonl', delete=False).name
         
         try:
             sink = JSONLSink(output_path)
@@ -221,7 +221,7 @@ class TestTestImplEdgeCases:
     
     def test_file_sink_logging_every_100_records(self):
         """Test FileSink progress logging at 100 record intervals"""
-        output_path = tempfile.mktemp(suffix='.jsonl')
+        output_path = tempfile.NamedTemporaryFile(suffix='.jsonl', delete=False).name
         
         try:
             sink = FileSink(output_path)
@@ -274,7 +274,7 @@ class TestPipelineLoggingEdgeCase:
                 writer.writerow({"id": str(i), "data": f"test{i}"})
             csv_path = f.name
         
-        output_path = tempfile.mktemp(suffix='.jsonl')
+        output_path = tempfile.NamedTemporaryFile(suffix='.jsonl', delete=False).name
         
         try:
             source = CSVSource(csv_path)

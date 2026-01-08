@@ -313,7 +313,7 @@ class TestCLIIntegration:
             writer.writerow({"id": "2", "data": "test2"})
             csv_path = f.name
         
-        output_path = tempfile.mktemp(suffix='.jsonl')
+        output_path = tempfile.NamedTemporaryFile(suffix='.jsonl', delete=False).name
         
         try:
             # Run via CLI

@@ -79,7 +79,7 @@ class TestPipelineLine270:
                 writer.writerow({"id": str(i), "data": f"test{i}"})
             csv_path = f.name
         
-        output_path = tempfile.mktemp(suffix='.jsonl')
+        output_path = tempfile.NamedTemporaryFile(suffix='.jsonl', delete=False).name
         
         try:
             source = CSVSource(csv_path)

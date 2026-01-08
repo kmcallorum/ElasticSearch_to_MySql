@@ -121,7 +121,7 @@ if __name__ == "__main__":
     import os
     
     # Create test JSONL file
-    test_file = tempfile.mktemp(suffix='.jsonl')
+    test_file = tempfile.NamedTemporaryFile(suffix='.jsonl', delete=False).name
     
     with open(test_file, 'w') as f:
         f.write('{"id": "rec1", "content": {"name": "Alice", "age": 30}}\n')

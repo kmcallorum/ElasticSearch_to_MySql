@@ -206,7 +206,7 @@ class TestPipelineMetricsEdgeCases:
                 writer.writerow({"id": str(i), "data": f"test{i}"})
             csv_path = f.name
         
-        output_path = tempfile.mktemp(suffix='.txt')
+        output_path = tempfile.NamedTemporaryFile(suffix='.txt', delete=False).name
         
         try:
             source = CSVSource(csv_path)
@@ -248,7 +248,7 @@ class TestPipelineMetricsEdgeCases:
                 writer.writerow({"id": str(i), "data": f"test{i}"})
             csv_path = f.name
         
-        output_path = tempfile.mktemp(suffix='.jsonl')
+        output_path = tempfile.NamedTemporaryFile(suffix='.jsonl', delete=False).name
         
         try:
             source = CSVSource(csv_path)
@@ -289,7 +289,7 @@ class TestMetricsAvailabilityPaths:
             writer.writerow({"id": "1", "data": "test"})
             csv_path = f.name
         
-        output_path = tempfile.mktemp(suffix='.txt')
+        output_path = tempfile.NamedTemporaryFile(suffix='.txt', delete=False).name
         
         try:
             # Import after metrics might be available

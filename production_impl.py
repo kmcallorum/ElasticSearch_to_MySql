@@ -155,9 +155,9 @@ class ElasticsearchSource(DataSource):
         pass
 
 
-class MySQLSink(DataSink):
-    """Production MySQL data sink with thread-safe operations"""
-    import threading
+
+
+
 
 
 class MySQLSink(DataSink):

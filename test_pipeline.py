@@ -73,6 +73,7 @@ def sample_csv_with_duplicates(temp_dir):
 
 
 # Basic pipeline tests
+@pytest.mark.unit
 class TestBasicPipeline:
     """Test basic pipeline functionality"""
     
@@ -115,6 +116,7 @@ class TestBasicPipeline:
             assert len(lines) == 3
 
 
+@pytest.mark.unit
 class TestDuplicateHandling:
     """Test duplicate record handling"""
     
@@ -140,6 +142,7 @@ class TestDuplicateHandling:
             assert ids == ["1", "2", "3"]
 
 
+@pytest.mark.unit
 class TestJSONHandling:
     """Test JSON content handling"""
     
@@ -165,6 +168,7 @@ class TestJSONHandling:
                 assert "value" in record
 
 
+@pytest.mark.unit
 class TestStatistics:
     """Test statistics tracking"""
     

@@ -18,6 +18,8 @@ from test_impl import CSVSource, FileSink, JSONLSink
 from error_analyzer import SimpleErrorAnalyzer, NoOpErrorAnalyzer
 
 
+@pytest.mark.multithreaded
+@pytest.mark.performance
 class TestMultiThreadedExecution:
     """Test multi-threaded pipeline execution"""
     
@@ -224,6 +226,7 @@ class TestMultiThreadedExecution:
                 os.unlink(output_path)
 
 
+@pytest.mark.unit
 class TestPipelineWithErrorAnalyzer:
     """Test pipeline with different error analyzers"""
     
@@ -288,6 +291,7 @@ class TestPipelineWithErrorAnalyzer:
                 os.unlink(output_path)
 
 
+@pytest.mark.unit
 class TestPipelineEdgeCases:
     """Test edge cases and boundary conditions"""
     

@@ -175,7 +175,7 @@ class TestPipelineWithMetrics:
             )
             
             # Should not raise exception (errors are logged)
-            stats = pipeline.run()
+            pipeline.run()
             pipeline.cleanup()
             
         finally:

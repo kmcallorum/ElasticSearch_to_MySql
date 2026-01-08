@@ -72,9 +72,9 @@ class TestPipelineErrorHandling:
             pipeline = DataPipeline(source, mock_sink, num_threads=1, error_analyzer=analyzer)
             
             # Should complete despite insert errors
-            stats = pipeline.run()
+            pipeline.run()
             pipeline.cleanup()
-            
+
             # Verify it attempted all records
             assert mock_sink.insert_record.call_count == 3
             
@@ -113,10 +113,10 @@ class TestPipelineErrorHandling:
             analyzer.analyze_error = capture_analyze
             
             pipeline = DataPipeline(source, mock_sink, num_threads=1, error_analyzer=analyzer)
-            
-            stats = pipeline.run()
+
+            pipeline.run()
             pipeline.cleanup()
-            
+
             # Verify context was built correctly
             assert "operation" in captured_context
             assert captured_context["operation"] == "sink_insert"
@@ -151,11 +151,11 @@ class TestPipelineErrorHandling:
             mock_analyzer.analyze_error.side_effect = Exception("Analyzer crashed!")
             
             pipeline = DataPipeline(source, mock_sink, num_threads=1, error_analyzer=mock_analyzer)
-            
+
             # Pipeline should complete despite analyzer failure
-            stats = pipeline.run()
+            pipeline.run()
             pipeline.cleanup()
-            
+
             # Verify analyzer was called but didn't break pipeline
             assert mock_analyzer.analyze_error.called
             
@@ -266,8 +266,8 @@ class TestPipelineStatistics:
             sink = FileSink(output_path)
             
             pipeline = DataPipeline(source, sink, num_threads=1)
-            stats = pipeline.run()
-            
+            pipeline.run()
+
             # Verify total_processed
             assert pipeline.total_processed == 100
             

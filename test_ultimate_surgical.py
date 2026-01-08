@@ -31,7 +31,7 @@ class TestMetricsServerLine49to51:
             # Patch generate_latest to raise exception
             with patch('metrics_server.generate_latest', side_effect=Exception("Metrics generation failed")):
                 try:
-                    response = urllib.request.urlopen(f"{server.get_url()}/metrics", timeout=2)
+                    urllib.request.urlopen(f"{server.get_url()}/metrics", timeout=2)
                     # Should get 500 error
                     pytest.fail("Should have raised HTTPError")  # pragma: no cover
                 except urllib.error.HTTPError as e:

@@ -46,7 +46,7 @@ class TestElasticsearchSourceEdgeCases:
     def test_authentication_missing_both(self):
         """Test ES source with no authentication raises error"""
         with pytest.raises(ValueError) as exc_info:
-            source = ElasticsearchSource(
+            ElasticsearchSource(
                 es_url="http://localhost:9200/test/_search",
                 batch_size=100
             )
@@ -56,7 +56,7 @@ class TestElasticsearchSourceEdgeCases:
     def test_authentication_missing_password(self):
         """Test ES source with only username raises error"""
         with pytest.raises(ValueError) as exc_info:
-            source = ElasticsearchSource(
+            ElasticsearchSource(
                 es_url="http://localhost:9200/test/_search",
                 es_user="admin",
                 batch_size=100

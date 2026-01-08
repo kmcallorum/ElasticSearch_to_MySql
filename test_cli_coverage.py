@@ -261,13 +261,12 @@ class TestPipelineMetricsUnavailable:
                 import importlib
                 import pipeline as pipeline_module
                 importlib.reload(pipeline_module)
-                
-                from pipeline import DataPipeline
+
                 source = CSVSource(csv_path)
                 sink = FileSink(output_path)
-                
+
                 # Create pipeline with metrics enabled (but unavailable)
-                pipeline = DataPipeline(
+                pipeline = pipeline_module.DataPipeline(
                     source, 
                     sink, 
                     num_threads=1,
@@ -287,9 +286,7 @@ class TestPipelineMetricsUnavailable:
             if os.path.exists(output_path):
                 os.unlink(output_path)
             
-            # Restore normal import
-            import importlib
-            import pipeline as pipeline_module
+            # Restore normal import - reload to restore metrics
             importlib.reload(pipeline_module)
 
 

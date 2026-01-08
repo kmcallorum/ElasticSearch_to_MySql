@@ -74,7 +74,7 @@ class TestCreateSink:
         args.db_table = "testtable"
         
         with patch('pipeline_cli.MySQLSink') as MockSink:
-            sink = create_sink(args)
+            _ = create_sink(args)
             
             MockSink.assert_called_once_with(
                 host="localhost",
@@ -91,7 +91,7 @@ class TestCreateSink:
         args.output_file = "output.jsonl"
         
         with patch('pipeline_cli.FileSink') as MockSink:
-            sink = create_sink(args)
+            _ = create_sink(args)
             
             MockSink.assert_called_once_with(filepath="output.jsonl")
     
@@ -102,7 +102,7 @@ class TestCreateSink:
         args.output_file = "output.jsonl"
         
         with patch('pipeline_cli.JSONLSink') as MockSink:
-            sink = create_sink(args)
+            _ = create_sink(args)
             
             MockSink.assert_called_once_with(filepath="output.jsonl")
     

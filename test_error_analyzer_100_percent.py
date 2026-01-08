@@ -223,6 +223,8 @@ class TestSimpleErrorAnalyzerAllMethods:
             json.loads("invalid json")
         except json.JSONDecodeError as e:
             error = e
+        else:
+            pytest.fail("Expected JSONDecodeError was not raised")
         
         context = {"operation": "parse_json"}
         result = analyzer.analyze_error(error, context)

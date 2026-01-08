@@ -60,7 +60,6 @@ class TestLine171Simple:
         def track_join(*args, **kwargs):
             join_called[0] = True
             # Don't actually join, just mark it
-            pass
         
         server.thread.is_alive = force_alive
         server.thread.join = track_join

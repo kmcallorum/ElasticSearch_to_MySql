@@ -152,8 +152,7 @@ class TestClaudeErrorAnalyzer:
     def test_builds_proper_prompt(self):
         """Test that prompt is built correctly"""
         analyzer = ClaudeErrorAnalyzer(api_key="test-key")
-        
-        error = ValueError("Invalid data")
+
         context = {"operation": "data_parse", "record_id": "123"}
         
         prompt = analyzer._build_prompt(

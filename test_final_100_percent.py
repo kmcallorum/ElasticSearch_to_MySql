@@ -95,10 +95,9 @@ class TestPipelineCLIFinalCoverage:
                         try:
                             main()
                         except SystemExit:
-                            pass
-                    
+                            pass  # Expected - CLI exits after run
+
                     # Verify JSONL source was used (line 55 was executed)
-                    output = captured_output.getvalue()
                     # The pipeline should have run (even if it fails at MySQL)
                     assert True  # Line 55 was executed if we got here
         
@@ -170,10 +169,8 @@ class TestPipelineCLIFinalCoverage:
                                 try:
                                     main()
                                 except SystemExit:
-                                    pass
-                            
-                            output = captured_output.getvalue()
-                            
+                                    pass  # Expected - CLI exits after run
+
                             # Verify AI error analysis was executed (lines 238-258)
                             # The AI analysis should have been called
                             assert mock_client.messages.create.called or True  # Lines 238-258 executed
@@ -237,8 +234,8 @@ class TestPipelineCLIFinalCoverage:
                                 try:
                                     main()
                                 except SystemExit:
-                                    pass
-                            
+                                    pass  # Expected - CLI exits after run
+
                             # Should handle the exception gracefully (line 257-258)
                             assert True  # Exception path executed
         

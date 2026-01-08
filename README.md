@@ -3,6 +3,7 @@
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Tests](https://github.com/kmcallorum/ElasticSearch_to_MySql/actions/workflows/tests.yml/badge.svg)](https://github.com/kmcallorum/ElasticSearch_to_MySql/actions/workflows/tests.yml)
+[![CodeQL](https://github.com/kmcallorum/ElasticSearch_to_MySql/actions/workflows/codeql.yml/badge.svg)](https://github.com/kmcallorum/ElasticSearch_to_MySql/actions/workflows/codeql.yml)
 [![Tests](https://img.shields.io/badge/tests-pytest-green.svg)](https://docs.pytest.org/)
 
 A production-ready, testable data migration tool for moving data between Elasticsearch, MySQL, CSV files, and other sources/sinks. Built with dependency injection for maximum flexibility and testability.

@@ -6,3 +6,4 @@ anthropic>=0.39.0  # Optional: for AI-powered error analysis
 prometheus-client>=0.17.0
 beautifulsoup4>=4.12.0
 coverage-badge>=1.1.0
+urllib3>=2.6.3 # not directly required, pinned by Snyk to avoid a vulnerability

@@ -20,7 +20,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language: [ 'python' ]
+        # 'actions' scans the workflow files themselves (e.g. GITHUB_TOKEN
+        # permissions); without it, Actions alerts are never re-evaluated.
+        language: [ 'python', 'actions' ]
 
     steps:
     - name: Checkout repository

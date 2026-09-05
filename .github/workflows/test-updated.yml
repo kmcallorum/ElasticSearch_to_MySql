@@ -109,6 +109,6 @@ jobs:
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         files: ./coverage.xml
-        slug: kmcallorum/elasticsearch_to_mysql  # Force lowercase
+        slug: Lanier-Developments/elasticsearch_to_mysql  # Force lowercase
         fail_ci_if_error: false
         verbose: true

@@ -2,8 +2,8 @@
 
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Tests](https://github.com/kmcallorum/ElasticSearch_to_MySql/actions/workflows/test-updated.yml/badge.svg)](https://github.com/kmcallorum/ElasticSearch_to_MySql/actions/workflows/test-updated.yml)
-[![CodeQL](https://github.com/kmcallorum/ElasticSearch_to_MySql/actions/workflows/codeql.yml/badge.svg)](https://github.com/kmcallorum/ElasticSearch_to_MySql/actions/workflows/codeql.yml)
+[![Tests](https://github.com/Lanier-Developments/ElasticSearch_to_MySql/actions/workflows/test-updated.yml/badge.svg)](https://github.com/Lanier-Developments/ElasticSearch_to_MySql/actions/workflows/test-updated.yml)
+[![CodeQL](https://github.com/Lanier-Developments/ElasticSearch_to_MySql/actions/workflows/codeql.yml/badge.svg)](https://github.com/Lanier-Developments/ElasticSearch_to_MySql/actions/workflows/codeql.yml)
 [![Coverage](./coverage.svg)](./coverage.svg)
 [![Tests](https://img.shields.io/badge/tests-pytest-green.svg)](https://docs.pytest.org/)
 
@@ -399,4 +399,4 @@ Refactored from original ES-to-MySQL migration script with focus on testability,
 
 **Total Tests:** 293+ comprehensive tests
 **Last Updated:** 2025-12-23 20:18:06 UTC
-[![codecov](https://codecov.io/gh/kmcallorum/ElasticSearch_to_MySql/graph/badge.svg?token=YAT550JJB9)](https://codecov.io/gh/kmcallorum/ElasticSearch_to_MySql)
+[![codecov](https://codecov.io/gh/Lanier-Developments/ElasticSearch_to_MySql/graph/badge.svg?token=YAT550JJB9)](https://codecov.io/gh/Lanier-Developments/ElasticSearch_to_MySql)
